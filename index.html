@@ -94,24 +94,6 @@ textarea{resize:vertical;min-height:150px;font-family:var(--mono);font-size:13px
 .icon-btn:hover{color:var(--fg)}
 .linkish{background:none;border:0;padding:0;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;font-size:inherit}
 
-/* nalog */
-.acct{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;background:var(--surface-2);font-size:13.5px}
-.acct .who{display:flex;align-items:center;gap:8px;min-width:0}
-.acct .who b{overflow-wrap:anywhere}
-.acct .ms{color:var(--muted)}
-.acct.on .ms{color:var(--ok)}
-
-/* linkovi i progres */
-.links{display:grid;gap:8px}
-.link-row{display:flex;gap:6px}
-.link-row input{flex:1;min-width:0;padding:12px 13px;font-size:15px}
-.link-row .icon-btn{width:44px;height:auto}
-.progress{display:grid;gap:8px}
-.bar{height:6px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
-.bar i{display:block;height:100%;width:35%;background:var(--accent);border-radius:999px;animation:slide 1.3s ease-in-out infinite}
-.bar.det i{animation:none;transition:width .4s}
-@keyframes slide{from{transform:translateX(-100%)}to{transform:translateX(300%)}}
-
 .postcard{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--line);border-radius:var(--r-sm);padding:8px;background:var(--surface-2)}
 .postcard .ph{width:64px;height:64px;border-radius:7px;background:var(--line);overflow:hidden;display:grid;place-items:center;color:var(--muted)}
 .postcard img{width:100%;height:100%;object-fit:cover;display:block;max-width:100%}
@@ -119,13 +101,23 @@ textarea{resize:vertical;min-height:150px;font-family:var(--mono);font-size:13px
 .postcard .meta b{font-size:14px}
 .postcard .cap{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* obeleživač */
-.bm-box{display:grid;gap:12px;border:1px dashed var(--line);border-radius:var(--r);padding:14px;background:var(--surface-2)}
-.bm-steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
-.bm-steps li::marker{color:var(--accent);font-family:var(--mono)}
-.bm-link{cursor:grab;background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.how{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:how}
+.how li{counter-increment:how;display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 12px;align-items:start}
+.how li::before{content:counter(how);grid-row:1/3;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font:500 13px var(--mono)}
+.how li > :not(.txt){grid-column:2}
+.how .txt{display:grid;gap:2px;font-size:14px;padding-top:3px}
+.how .txt span{color:var(--muted);font-size:12.5px}
+.how li[data-setup]{grid-template-columns:28px minmax(0,1fr) auto}
+.how li[data-setup] .bm-link{grid-column:3;grid-row:1}
+.ready .how li[data-setup]{display:none}
+.bm-link{cursor:grab;background:var(--fg);color:var(--bg);border-color:var(--fg);padding:9px 16px}
 .bm-link:active{cursor:grabbing}
-
+kbd{font:500 11.5px var(--mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface);color:var(--fg)}
+.wait{display:flex;gap:10px;align-items:center;border:1.5px dashed var(--line);border-radius:var(--r);padding:14px 16px;color:var(--muted);font-size:14px;background:var(--surface-2)}
+.wait .ms{color:var(--accent)}
+.wait.flash{border-color:var(--accent);color:var(--fg)}
+.link-row{display:flex;gap:6px;margin-top:6px}
+.link-row input{flex:1;min-width:0}
 .drop{border:1.5px dashed var(--line);border-radius:var(--r);padding:22px;text-align:center;color:var(--muted);cursor:pointer;background:var(--surface-2);display:block}
 .drop.over{border-color:var(--accent);color:var(--fg)}
 .drop strong{color:var(--fg)}
@@ -274,60 +266,51 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
 
   <div class="grid" id="mainGrid">
     <div class="col">
-      <!-- 1. Objava -->
-      <section class="panel" aria-labelledby="h-src">
-        <div class="panel-h"><h2 id="h-src"><span class="step">1</span> Objava</h2></div>
+      <!-- 1. Komentari -->
+      <section class="panel" id="srcPanel" aria-labelledby="h-src">
+        <div class="panel-h"><h2 id="h-src"><span class="step">1</span> Komentari sa Instagrama</h2>
+          <button class="linkish" id="howToggle" type="button" hidden>Kako radi</button></div>
         <div class="panel-b">
-          <div class="acct" id="acct" hidden>
-            <div class="who"><span class="ms" id="acctIcon">lock</span><span id="acctText">Nisi prijavljen na Instagram</span></div>
-            <button class="btn sm" id="acctBtn" type="button"><span class="ms">login</span>Prijavi se</button>
+          <ol class="how" id="how">
+            <li data-setup>
+              <div class="txt"><b>Prevuci dugme Žreb na traku sa obeleživačima</b><span>Samo prvi put. Ne vidiš traku? <kbd class="mod">Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd></span></div>
+              <a class="btn bm-link" id="bmLink" href="#" draggable="true" title="Prevuci me na traku sa obeleživačima"><span class="ms">bookmark_add</span>Žreb</a>
+            </li>
+            <li>
+              <div class="txt"><b>Otvori objavu na Instagramu i klikni Žreb</b><span>Na računaru, u pregledaču u kom si prijavljen na Instagram.</span></div>
+              <div class="link-row">
+                <input type="url" id="link0" class="linkIn" inputmode="url" autocomplete="off" placeholder="Nalepi link objave da je otvoriš" aria-label="Link objave">
+                <button class="btn" id="openPostBtn" type="button"><span class="ms">open_in_new</span>Otvori</button>
+              </div>
+            </li>
+            <li>
+              <div class="txt"><b id="step3Title">Klikni „Otvori u Žrebu“</b><span id="step3Text">Kad obeleživač završi, komentari stižu ovde.</span></div>
+            </li>
+          </ol>
+
+          <div class="wait" id="waitBox">
+            <span class="ms">content_paste</span>
+            <span id="waitText">Čekam komentare. Ako ih imaš kopirane, pritisni <kbd class="mod">Ctrl</kbd>+<kbd>V</kbd>.</span>
           </div>
 
-          <div>
-            <label class="lbl" for="link0">Link Instagram objave ili rila</label>
-            <div class="links" id="links">
-              <div class="link-row"><input type="url" id="link0" class="linkIn" inputmode="url" autocomplete="off" placeholder="https://www.instagram.com/p/DA1b2C3d4E5/"></div>
-            </div>
-            <p class="help" id="linkHelp">Nalepi link i komentari se preuzimaju sami. Više objava se spaja u jedan žreb.</p>
-          </div>
-          <div class="row" id="srvActions" hidden>
-            <button class="btn primary" id="fetchBtn" type="button"><span class="ms">download</span>Preuzmi komentare</button>
-            <button class="btn ghost sm" id="addLink" type="button"><span class="ms">add</span>Još jedna objava</button>
-          </div>
-          <div class="progress" id="prog" hidden>
-            <div class="bar" id="progBar"><i></i></div>
-            <div class="row" style="justify-content:space-between"><span class="status" id="progText">Otvaram objavu</span><button class="btn ghost sm" id="cancelBtn" type="button">Otkaži</button></div>
-          </div>
           <div class="postcard" id="postCard" hidden>
             <div class="ph"><img id="postImg" alt="" hidden><span class="ms" id="postPh">emoji_events</span></div>
             <div class="meta"><b id="postOwner"></b><span class="cap" id="postCap"></span><span id="postCount" style="color:var(--muted)"></span></div>
           </div>
+          <label class="check" id="mergeWrap" hidden><input type="checkbox" id="mergeIn"><span>Sledeću objavu dodaj na ove komentare<small>Za jedan žreb na više objava.</small></span></label>
           <span class="status" id="srcStatus"></span>
-
-          <div class="bm-box" id="bmBox" hidden>
-            <div class="row" style="justify-content:space-between">
-              <b>Preuzimanje preko obeleživača</b>
-              <a class="btn sm bm-link" id="bmLink" href="#" draggable="true" title="Prevuci na traku sa obeleživačima"><span class="ms">bookmark_add</span>Žreb</a>
-            </div>
-            <ol class="bm-steps">
-              <li>Prevuci dugme <b>Žreb</b> na traku sa obeleživačima (Ctrl+Shift+B je prikazuje).</li>
-              <li>Otvori objavu na instagram.com, prijavljen na svoj nalog.</li>
-              <li>Klikni obeleživač. Komentari stižu ovde sami.</li>
-            </ol>
-            <div class="row"><button class="btn sm" id="openPostBtn" type="button"><span class="ms">open_in_new</span>Otvori objavu</button>
-              <span class="help" style="margin:0">Za preuzimanje direktno sa linka pokreni Žreb na računaru (<code>start-windows.bat</code>).</span></div>
-          </div>
 
           <details class="adv">
             <summary><span class="ms">content_paste</span>Drugi načini unosa</summary>
             <div class="seg" role="tablist" data-group="src">
               <button role="tab" aria-selected="true" data-tab="paste" type="button"><span class="ms">content_paste</span>Nalepi tekst</button>
               <button role="tab" aria-selected="false" data-tab="file" type="button"><span class="ms">upload_file</span>Fajl</button>
+              <button role="tab" aria-selected="false" data-tab="code" type="button"><span class="ms">bookmark_add</span>Obeleživač ručno</button>
             </div>
             <div data-pane="src:paste" style="margin-top:12px">
               <label class="lbl" for="pasteBox">Komentari</label>
               <textarea id="pasteBox" spellcheck="false" placeholder="ana.markovic: Učestvujem! @mila.j @nikola_p"></textarea>
-              <p class="help">Komentari kopirani sa instagram.com, jedan po redu u obliku <code>korisnik: tekst</code>, ili JSON iz obeleživača.</p>
+              <p class="help">Komentari kopirani sa instagram.com ili jedan po redu u obliku <code>korisnik: tekst</code>.</p>
               <div class="row" style="margin-top:10px">
                 <button class="btn primary" id="parseBtn" type="button">Učitaj komentare</button>
                 <button class="btn ghost" id="sampleBtn" type="button">Primer</button>
@@ -337,10 +320,14 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
               <label class="drop" id="drop" for="fileIn">
                 <span class="ms" style="font-size:28px">upload_file</span><br>
                 <strong>Izaberi ili prevuci fajl</strong><br>
-                <span style="font-size:13px">zreb-komentari.json, CSV ili TXT</span>
+                <span style="font-size:13px">CSV, JSON ili TXT</span>
               </label>
               <input type="file" id="fileIn" accept=".csv,.json,.txt,text/csv,application/json,text/plain" hidden>
               <p class="help">CSV kolone: username, text, timestamp. Radi i sa izvozom drugih alata.</p>
+            </div>
+            <div data-pane="src:code" hidden style="margin-top:12px">
+              <p class="help" style="margin-top:0">Ako prevlačenje ne radi: napravi novi obeleživač (desni klik na traku → Dodaj stranicu), nazovi ga Žreb i u polje za adresu nalepi kod.</p>
+              <button class="btn" id="copyBmBtn" type="button"><span class="ms">content_copy</span>Kopiraj kod obeleživača</button>
             </div>
           </details>
         </div>
@@ -381,14 +368,8 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
             <span class="lbl">Da li pobednik prati stranicu</span>
             <div class="choice">
               <label class="opt"><input type="radio" name="follow" value="none" checked><div><b>Ne proveravaj</b></div></label>
-              <label class="opt" id="optAuto"><input type="radio" name="follow" value="auto"><div><b>Automatska provera</b><span id="autoHint">Žreb proverava svakog pobednika i rezervu preko tvog Instagram naloga i menja one koji ne prate.</span></div></label>
               <label class="opt"><input type="radio" name="follow" value="manual"><div><b>Ručna potvrda</b><span>Otvoriš profil pobednika, pa potvrdiš ili zameniš rezervom.</span></div></label>
               <label class="opt"><input type="radio" name="follow" value="list"><div><b>Uporedi sa listom pratilaca</b><span>Followers fajl iz Instagram izvoza podataka ili TXT lista.</span></div></label>
-            </div>
-            <div class="sub" id="autoWrap" hidden style="margin-top:10px">
-              <label class="lbl" for="mustFollow">Nalozi koje pobednik mora da prati</label>
-              <input type="text" id="mustFollow" placeholder="Prazno = nalog organizatora" autocomplete="off">
-              <p class="help">Odvoji zarezom, npr. <code>@pekara.zrno, @partner</code>. Privatni nalozi se mogu proveriti samo ako ih tvoj nalog prati.</p>
             </div>
             <div class="sub" id="followWrap" hidden style="margin-top:10px">
               <div class="row"><label class="btn sm" for="followIn"><span class="ms">group</span>Učitaj pratioce</label><span class="status" id="followStatus">Nije učitano</span></div>
@@ -403,9 +384,8 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
               <div><label class="lbl" for="keyword">Obavezna reč ili hashtag</label><input type="text" id="keyword" placeholder="#nagradnaigra"></div>
               <div><label class="lbl" for="deadline">Rok za komentare</label><input type="datetime-local" id="deadline"></div>
               <div class="full"><label class="lbl" for="blacklist">Isključeni nalozi</label><textarea id="blacklist" style="min-height:70px" placeholder="@zaposleni1, @partner.nalog"></textarea><p class="help">Odvoji zarezom ili novim redom.</p></div>
-              <label class="check full"><input type="checkbox" id="replies"><span>Računaj i odgovore na komentare<small>Preuzimanje traje duže jer se otvara svaka nit.</small></span></label>
-              <div><label class="lbl" for="limitIn">Najviše komentara po objavi</label><input type="number" id="limitIn" min="0" max="100000" value="0"><p class="help">0 = svi komentari.</p></div>
-              <div><label class="lbl" for="seedIn">Kod žreba</label><input type="text" id="seedIn" placeholder="Prazno = nasumičan" autocomplete="off"><p class="help">Isti kod i komentari daju isti rezultat.</p></div>
+              <label class="check full"><input type="checkbox" id="replies"><span>Računaj i odgovore na komentare<small>Obeleživač preuzima i odgovore, a ovde biraš da li se računaju.</small></span></label>
+              <div class="full"><label class="lbl" for="seedIn">Kod žreba</label><input type="text" id="seedIn" placeholder="Prazno = nasumičan" autocomplete="off"><p class="help">Isti kod i komentari daju isti rezultat.</p></div>
             </div>
           </details>
         </form>
@@ -462,51 +442,16 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
       </section>
     </div>
   </div>
-  <footer>Žreb preuzima komentare sam, bez spoljnih servisa. Pravila i izvlačenje rade se u tvom pregledaču.</footer>
+  <footer>Komentare preuzima obeleživač u tvom pregledaču, sa tvojom Instagram prijavom. Ništa se ne šalje na drugi server.</footer>
 </div>
-
-<dialog id="loginDlg" aria-labelledby="h-login">
-  <div class="dlg">
-    <h2 id="h-login">Instagram nalog za preuzimanje</h2>
-    <p class="help" style="margin:0">Žreb čita komentare kao što ih ti vidiš kad otvoriš objavu. Prijava se čuva samo na ovom računaru, u folderu <code>.zreb</code>. Preporuka: koristi sporedni nalog.</p>
-    <div class="seg" role="tablist" data-group="login">
-      <button role="tab" aria-selected="true" data-tab="pw" type="button">Korisničko ime i lozinka</button>
-      <button role="tab" aria-selected="false" data-tab="ck" type="button">Kolačić sessionid</button>
-    </div>
-    <form id="pwForm" data-pane="login:pw">
-      <div id="pwStep">
-        <label class="lbl" for="igUser">Korisničko ime</label>
-        <input type="text" id="igUser" autocomplete="username" autocapitalize="off" spellcheck="false">
-        <label class="lbl" for="igPass" style="margin-top:10px">Lozinka</label>
-        <input type="password" id="igPass" autocomplete="current-password">
-      </div>
-      <div id="tfStep" hidden>
-        <label class="lbl" for="igCode">Kod za potvrdu</label>
-        <input type="text" id="igCode" inputmode="numeric" autocomplete="one-time-code" placeholder="123456">
-        <p class="help" id="tfHelp">Unesi kod.</p>
-      </div>
-      <p class="err" id="pwErr" role="alert"></p>
-      <div class="row" style="justify-content:flex-end">
-        <button class="btn primary" id="pwSubmit" type="submit"><span class="ms">login</span>Prijavi se</button>
-      </div>
-    </form>
-    <form id="ckForm" data-pane="login:ck" hidden>
-      <label class="lbl" for="igCookie">Vrednost kolačića sessionid</label>
-      <input type="password" id="igCookie" autocomplete="off" placeholder="1234567890%3AAbCdEf...">
-      <p class="help">Ako prijava lozinkom traži potvrdu: otvori instagram.com u Chrome-u prijavljen, F12 → Application → Cookies → https://www.instagram.com → kopiraj vrednost <code>sessionid</code>.</p>
-      <p class="err" id="ckErr" role="alert"></p>
-      <div class="row" style="justify-content:flex-end"><button class="btn primary" type="submit"><span class="ms">how_to_reg</span>Sačuvaj</button></div>
-    </form>
-    <div class="row" style="justify-content:flex-end"><button class="btn ghost" type="button" id="loginClose">Zatvori</button></div>
-  </div>
-</dialog>
 
 <div class="mobile-bar" id="mobileBar"><small id="mbText">0 šansi</small><button class="btn primary" id="drawBtnM" type="button" disabled><span class="ms">casino</span>Izvuci pobednike</button></div>
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script>
 /* Obeleživač: ova funkcija se izvršava na instagram.com, u pregledaču korisnika i sa njegovom prijavom.
-   Koristi iste interne pozive kao lokalni server (scraper/instagram.js). Bez komentara sa dve kose crte jer ide u javascript: link. */
+   Čita komentare istim internim pozivima koje koristi instagram.com dok skroluješ komentare.
+   TARGET je adresa Žreba (GitHub Pages) ili null u artifact-u, gde se komentari kopiraju i nalepe. */
 function zrebBookmarklet(TARGET) {
   var mm = location.pathname.match(/\/(p|reels?|tv)\/([A-Za-z0-9_-]+)/);
   if (!/(^|\.)instagram\.com$/.test(location.hostname) || !mm) { alert("Žreb: otvori Instagram objavu (instagram.com/p/...) pa ponovo klikni obeleživač."); return; }
@@ -516,38 +461,57 @@ function zrebBookmarklet(TARGET) {
   var A = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", big = BigInt(0);
   for (var k = 0; k < Math.min(11, code.length); k++) big = big * BigInt(64) + BigInt(A.indexOf(code[k]));
   var mediaId = big.toString();
-  var win = window.open(TARGET + "#import", "zreb");
   var box = document.createElement("div");
-  box.style.cssText = "position:fixed;z-index:2147483647;top:16px;right:16px;background:#16171C;color:#ECEDF2;font:14px/1.45 system-ui,sans-serif;padding:14px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:340px";
+  box.style.cssText = "position:fixed;z-index:2147483647;top:16px;right:16px;width:320px;max-width:calc(100vw - 32px);background:#16171C;color:#ECEDF2;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;padding:16px;border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,.4)";
+  var title = document.createElement("div"), line = document.createElement("div"), barW = document.createElement("div"), bar = document.createElement("div"), acts = document.createElement("div");
+  title.style.cssText = "font-weight:700;font-size:15px;margin-bottom:4px";
+  title.textContent = "Žreb";
+  line.style.cssText = "color:#C9CBD3";
+  barW.style.cssText = "height:6px;border-radius:9px;background:#2B2D36;margin:10px 0 2px;overflow:hidden";
+  bar.style.cssText = "height:100%;width:4%;background:#F2668F;border-radius:9px;transition:width .3s";
+  acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin-top:12px";
+  barW.appendChild(bar);
+  box.append(title, line, barW, acts);
   document.body.appendChild(box);
-  function say(t) { box.textContent = "Žreb: " + t; }
-  function done(ms) { setTimeout(function () { box.remove(); window.__zrebRunning = false; }, ms); }
-  say("otvaram objavu...");
+  function say(t, pct) { line.textContent = t; if (pct != null) bar.style.width = Math.max(4, Math.min(100, pct)) + "%"; }
+  function button(text, primary, fn) {
+    var b = document.createElement("button");
+    b.textContent = text;
+    b.style.cssText = "border:0;border-radius:9px;padding:9px 13px;font:600 14px system-ui,sans-serif;cursor:pointer;" + (primary ? "background:#F2668F;color:#1A0710" : "background:#2B2D36;color:#ECEDF2");
+    b.onclick = fn;
+    acts.appendChild(b);
+    return b;
+  }
+  function close() { box.remove(); window.__zrebRunning = false; }
+  button("Otkaži", false, function () { stop = true; close(); });
+  var stop = false;
+  say("Otvaram objavu...");
   var csrf = (document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/) || [])[1] || "";
   var H = { "X-IG-App-ID": "936619743392459", "X-ASBD-ID": "129477", "X-Requested-With": "XMLHttpRequest", "X-CSRFToken": csrf };
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   async function get(path, tries) {
     tries = tries || 0;
+    if (stop) throw new Error("stop");
     var r = await fetch(path, { headers: H, credentials: "include" });
     if (r.status === 429 || r.status >= 500) {
-      if (tries >= 4) throw new Error("Instagram je privremeno ograničio zahteve. Sačekaj 10 do 15 minuta.");
+      if (tries >= 4) throw new Error("Instagram je privremeno ograničio zahteve. Sačekaj 10 do 15 minuta pa klikni Žreb ponovo.");
       var w = 5000 * Math.pow(2, tries);
-      say("Instagram traži pauzu, nastavljam za " + Math.round(w / 1000) + " s...");
+      say("Instagram traži kratku pauzu. Nastavljam za " + Math.round(w / 1000) + " s...");
       await wait(w);
       return get(path, tries + 1);
     }
     var j = null;
     try { j = await r.json(); } catch (e) {}
-    if (r.status === 401 || (j && (j.message === "login_required" || j.require_login))) throw new Error("Prijavi se na Instagram u ovom pregledaču pa pokušaj ponovo.");
-    if (j && (j.message === "checkpoint_required" || j.message === "challenge_required")) throw new Error("Instagram traži potvrdu naloga. Osveži stranicu i potvrdi da si to ti.");
-    if (!j) throw new Error("Neočekivan odgovor Instagrama (HTTP " + r.status + ").");
-    if (!r.ok || j.status === "fail") throw new Error(j.message || ("Greška HTTP " + r.status));
+    if (r.status === 401 || (j && (j.message === "login_required" || j.require_login))) throw new Error("Prijavi se na Instagram u ovom pregledaču, pa ponovo klikni Žreb.");
+    if (j && (j.message === "checkpoint_required" || j.message === "challenge_required")) throw new Error("Instagram traži da potvrdiš nalog. Osveži stranicu, potvrdi, pa ponovo klikni Žreb.");
+    if (!j) throw new Error("Instagram je vratio neočekivan odgovor (" + r.status + "). Osveži stranicu i probaj ponovo.");
+    if (!r.ok || j.status === "fail") throw new Error(j.message || ("Greška " + r.status));
     return j;
   }
   function pace(p) { return 700 + Math.random() * 700 + (p % 20 === 0 ? 4000 : 0); }
   (async function () {
     var info = null;
-    try { info = (await get("/api/v1/media/" + mediaId + "/info/")).items[0]; } catch (e) { if (/Prijavi|potvrdu/.test(e.message)) throw e; }
+    try { info = (await get("/api/v1/media/" + mediaId + "/info/")).items[0]; } catch (e) { if (e.message === "stop" || /Prijavi|potvrdiš/.test(e.message)) throw e; }
     if (info && info.pk) mediaId = String(info.pk);
     var total = info ? info.comment_count : null, out = [], seen = {}, parents = [], cursor = null, used = {}, page = 0;
     function add(c, p) {
@@ -567,7 +531,7 @@ function zrebBookmarklet(TARGET) {
         if ((c.child_comment_count || 0) > pv.length) parents.push(String(c.pk));
       });
       if (total == null && j.comment_count != null) total = j.comment_count;
-      say("preuzeto " + out.length + (total ? " od oko " + total : "") + " komentara...");
+      say("Preuzeto " + out.length + (total ? " od " + total : "") + " komentara...", total ? out.length / total * 100 : null);
       if (j.has_more_comments === false && j.has_more_headload_comments === false) break;
       var next = j.next_min_id && j.has_more_headload_comments !== false ? ["min_id", j.next_min_id] : j.next_max_id && j.has_more_comments !== false ? ["max_id", j.next_max_id] : j.next_min_id ? ["min_id", j.next_min_id] : null;
       if (!next || used[next[1]]) break;
@@ -580,7 +544,7 @@ function zrebBookmarklet(TARGET) {
       for (;;) {
         var jj = await get("/api/v1/media/" + mediaId + "/comments/" + parents[i] + "/child_comments/" + (cc ? "?" + cc[0] + "=" + encodeURIComponent(cc[1]) : ""));
         (jj.child_comments || []).forEach(function (r) { add(r, parents[i]); });
-        say("odgovori: nit " + (i + 1) + " od " + parents.length + ", ukupno " + out.length + " komentara...");
+        say("Preuzimam odgovore (" + (i + 1) + " od " + parents.length + ")...", 100);
         var nx = jj.next_max_child_cursor && jj.has_more_tail_child_comments ? ["max_id", jj.next_max_child_cursor] : jj.next_min_child_cursor && jj.has_more_head_child_comments ? ["min_id", jj.next_min_child_cursor] : null;
         if (!nx || usedC[nx[1]]) break;
         usedC[nx[1]] = 1;
@@ -590,39 +554,52 @@ function zrebBookmarklet(TARGET) {
       await wait(pace(++page));
     }
     var cand = info && ((info.image_versions2 && info.image_versions2.candidates) || (info.carousel_media && info.carousel_media[0].image_versions2 && info.carousel_media[0].image_versions2.candidates)) || [];
-    var msg = { type: "zreb-import", id: Date.now() + "-" + mediaId, payload: { post: { url: "https://www.instagram.com/" + kind + "/" + code + "/", code: code, owner: info && info.user ? info.user.username : null, caption: info && info.caption ? String(info.caption.text || "").slice(0, 300) : "", thumb: cand.length ? cand[cand.length - 1].url : null, commentCount: total }, comments: out } };
-    deliver(msg);
-  })().catch(function (e) { say(e.message); done(9000); });
-  function deliver(msg) {
-    var origin = new URL(TARGET).origin, acked = false, tries = 0, n = msg.payload.comments.length;
-    window.addEventListener("message", function (e) { if (e.origin === origin && e.data && e.data.type === "zreb-ack" && e.data.id === msg.id) acked = true; });
-    say("preuzeto " + n + " komentara, šaljem u Žreb...");
-    var t = setInterval(function () {
-      if (acked) { clearInterval(t); say("gotovo. " + n + " komentara je u Žrebu."); done(5000); return; }
-      if (++tries > 30 || !win || win.closed) { clearInterval(t); fallback(msg); return; }
-      try { win.postMessage(msg, origin); } catch (e) {}
-    }, 500);
+    var payload = { zreb: 1, post: { url: "https://www.instagram.com/" + kind + "/" + code + "/", code: code, owner: info && info.user ? info.user.username : null, caption: info && info.caption ? String(info.caption.text || "").slice(0, 300) : "", thumb: cand.length ? cand[cand.length - 1].url : null, commentCount: total }, comments: out };
+    finish(payload);
+  })().catch(function (e) {
+    if (e.message === "stop") return;
+    title.textContent = "Žreb: nije uspelo";
+    say(e.message);
+    acts.textContent = "";
+    button("Zatvori", false, close);
+  });
+  function finish(payload) {
+    var n = payload.comments.length, json = JSON.stringify(payload);
+    title.textContent = "Žreb: preuzeto " + n + " komentara";
+    bar.style.width = "100%";
+    acts.textContent = "";
+    if (TARGET) {
+      say("Klikni da ih otvoriš u Žrebu.");
+      var open = button("Otvori u Žrebu", true, function () { send(payload, open); });
+      button("Kopiraj", false, function () { copy(json, this); });
+    } else {
+      say("Kopiraj ih, vrati se u Žreb i pritisni Ctrl+V (na Mac-u Cmd+V).");
+      button("Kopiraj za Žreb", true, function () { copy(json, this); });
+    }
+    button("Zatvori", false, close);
   }
-  function fallback(msg) {
-    var json = JSON.stringify(msg.payload);
-    try {
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
-      a.download = "zreb-komentari.json";
-      document.body.appendChild(a); a.click(); a.remove();
-    } catch (e) {}
-    try { navigator.clipboard.writeText(json); } catch (e) {}
-    box.textContent = "";
-    var p = document.createElement("div");
-    p.textContent = "Žreb: preuzeto " + msg.payload.comments.length + " komentara. Sačuvan je fajl zreb-komentari.json. U Žrebu otvori Drugi načini unosa, pa Fajl.";
-    var l = document.createElement("a");
-    l.href = TARGET; l.target = "_blank"; l.textContent = "Otvori Žreb";
-    l.style.cssText = "display:inline-block;margin-top:8px;color:#F2668F;font-weight:600";
-    var x = document.createElement("button");
-    x.textContent = "Zatvori";
-    x.style.cssText = "margin-left:12px;background:none;border:0;color:#9A9DAA;cursor:pointer";
-    x.onclick = function () { box.remove(); window.__zrebRunning = false; };
-    box.append(p, l, x);
+  function copy(text, b) {
+    function ok() { b.textContent = "Kopirano"; say("Vrati se u Žreb i pritisni Ctrl+V (na Mac-u Cmd+V)."); }
+    function legacy() {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.cssText = "position:fixed;opacity:0;top:0";
+      document.body.appendChild(ta); ta.select();
+      var r = false; try { r = document.execCommand("copy"); } catch (e) {}
+      ta.remove();
+      if (r) ok(); else say("Kopiranje nije uspelo. Probaj ponovo.");
+    }
+    try { navigator.clipboard.writeText(text).then(ok, legacy); } catch (e) { legacy(); }
+  }
+  function send(payload, b) {
+    var origin = new URL(TARGET).origin, id = Date.now() + "-" + mediaId, acked = false, tries = 0;
+    var win = window.open(TARGET + "#import", "zreb");
+    window.addEventListener("message", function (e) { if (e.origin === origin && e.data && e.data.type === "zreb-ack" && e.data.id === id) acked = true; });
+    b.textContent = "Šaljem...";
+    var t = setInterval(function () {
+      if (acked) { clearInterval(t); b.textContent = "Poslato"; say("Komentari su u Žrebu. Možeš da zatvoriš ovaj prozorčić."); try { win.focus(); } catch (e) {} return; }
+      if (++tries > 30 || !win || win.closed) { clearInterval(t); b.textContent = "Otvori u Žrebu"; say("Žreb nije primio komentare. Klikni Kopiraj, otvori Žreb i pritisni Ctrl+V."); return; }
+      try { win.postMessage({ type: "zreb-import", id: id, payload: payload }, origin); } catch (e) {}
+    }, 400);
   }
 }
 </script>
@@ -635,6 +612,11 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 const normU = s => String(s || "").trim().replace(/^@+/, "").toLowerCase();
 const MENTION = /@([a-z0-9._]{1,30})/gi;
 const IMPORT_ORIGINS = ["https://www.instagram.com"];
+/* Na GitHub Pages (i svakom običnom sajtu) komentari stižu sami. U artifact-u (stranica u okviru) se nalepe sa Ctrl+V. */
+const EMBEDDED = (() => { try { return window.top !== window; } catch { return true; } })();
+const DIRECT = !EMBEDDED && /^https?:$/.test(location.protocol);
+const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+if (DIRECT) window.name = "zreb";
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} }
@@ -642,7 +624,6 @@ const store = {
 { const dev = store.get("zreb-dev-origin"); if (dev) IMPORT_ORIGINS.push(dev); }
 
 const state = { comments: [], source: "", isSample: false, posts: [], followers: null, rows: [], entries: [], filter: "all", q: "", shown: 120, draw: null };
-const srv = { ok: false, user: null };
 
 /* ---------- Tema ---------- */
 const themes = ["system", "light", "dark"], themeLabel = { system: "sistem", light: "svetla", dark: "tamna" };
@@ -809,11 +790,6 @@ function settings() {
     seed: v("seedIn").trim()
   };
 }
-function followAccounts() {
-  const list = $("#mustFollow").value.split(/[\s,;]+/).map(normU).filter(Boolean);
-  if (!list.length && settings().owner) list.push(settings().owner);
-  return [...new Set(list)];
-}
 
 function evaluate() {
   const s = settings();
@@ -863,7 +839,7 @@ function renderList() {
   const q = state.q.toLowerCase();
   const vis = rows.filter(r => (state.filter === "all" || (state.filter === "ok" ? !r.reason : !!r.reason)) && (!q || r.c.username.includes(q) || r.c.text.toLowerCase().includes(q)));
   const list = $("#list");
-  if (!rows.length) list.innerHTML = '<div class="empty">Još nema komentara. Nalepi link objave iznad.</div>';
+  if (!rows.length) list.innerHTML = '<div class="empty">Još nema komentara. Otvori objavu na Instagramu i klikni obeleživač Žreb.</div>';
   else if (!vis.length) list.innerHTML = '<div class="empty">Nema rezultata za ovaj filter.</div>';
   else {
     list.innerHTML = vis.slice(0, state.shown).map(r => `<div class="item">
@@ -888,6 +864,8 @@ function setComments(list, source, isSample = false, posts = []) {
   else setStatus("Nije pronađen nijedan komentar.", "bad");
   $("#results").hidden = true; state.draw = null;
   if (!posts.length) $("#postCard").hidden = true;
+  $("#waitBox").hidden = list.length > 0 && !isSample;
+  if (!list.length) $("#mergeWrap").hidden = true;
   evaluate();
 }
 function showPost(posts) {
@@ -902,7 +880,7 @@ function showPost(posts) {
   if (p.thumb) {
     img.onload = () => { img.hidden = false; $("#postPh").hidden = true; };
     img.onerror = () => { img.hidden = true; $("#postPh").hidden = false; };
-    img.src = srv.ok ? "api/img?u=" + encodeURIComponent(p.thumb) : p.thumb;
+    img.src = p.thumb;
   }
 }
 function adoptOwner(owner, wasSample) {
@@ -921,7 +899,7 @@ function sfc32(a, b, c, d) { return () => { a |= 0; b |= 0; c |= 0; d |= 0; cons
 function makeDraw(entries, s) {
   const seed = s.seed || newSeed();
   return { seed, rng: sfc32(...cyrb128(seed.toUpperCase())), pool: entries.slice(), used: new Set(), repeat: s.repeat, nAlt: s.nAlt,
-    winners: [], alts: [], out: [], mode: s.follow, accounts: s.follow === "auto" ? followAccounts() : [], checking: false,
+    winners: [], alts: [], out: [], mode: s.follow,
     at: new Date(), total: entries.length, users: new Set(entries.map(e => e.username)).size };
 }
 function drawOne(d) {
@@ -937,7 +915,6 @@ function drawOne(d) {
 function runDraw() {
   if (!state.entries.length) return;
   const s = settings();
-  if (s.follow === "auto" && !srv.user) { toast("Za automatsku proveru praćenja prijavi se na Instagram nalog."); if (srv.ok) openLogin(); return; }
   const d = makeDraw(state.entries, s);
   for (let i = 0; i < s.nWin; i++) { const w = drawOne(d); if (w) d.winners.push(w); }
   for (let i = 0; i < s.nAlt; i++) { const w = drawOne(d); if (w) d.alts.push(w); }
@@ -947,7 +924,7 @@ function runDraw() {
   ["#winners", "#alts", "#outs"].forEach(x => $(x).innerHTML = "");
   $("#altTitle").hidden = true; $("#outTitle").hidden = true; $("#resMeta").textContent = "";
   res.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
-  spin(() => { if (state.draw !== d) return; renderResults(); if (d.mode === "auto") autoVerify(d); });
+  spin(() => { if (state.draw !== d) return; renderResults(); });
 }
 function spin(done) {
   const reel = $("#reel"), name = $("#reelName");
@@ -961,23 +938,16 @@ function spin(done) {
   };
   tick();
 }
-function followBadge(w) {
-  if (w.follow === true) return '<span class="badge ok">Prati</span>';
-  if (w.follow === false) return `<span class="badge bad">Ne prati ${esc(w.missing || "")}</span>`;
-  if (w.follow === null) return '<span class="badge wait">Nije moguće proveriti</span>';
-  return state.draw.checking ? '<span class="badge wait">Proveravam praćenje</span>' : "";
-}
 function ticket(w, i, kind) {
   const d = state.draw, e = w.e;
   let badge = "";
   if (d.mode === "manual" && kind === "win") badge = w.status === "ok" ? '<span class="badge ok">Potvrđen</span>' : '<span class="badge wait">Čeka proveru</span>';
-  if (d.mode === "auto") badge = followBadge(w);
   const acts = d.mode === "manual" && kind === "win" && w.status !== "ok" ? `<div class="acts">
       <a class="btn sm" href="https://www.instagram.com/${encodeURIComponent(e.username)}/" target="_blank" rel="noopener"><span class="ms">person</span>Profil</a>
       <button class="btn sm" type="button" data-ok="${i}"><span class="ms">verified</span>Prati, potvrdi</button>
       <button class="btn sm" type="button" data-no="${i}"><span class="ms">block</span>Ne prati, zameni</button></div>` : "";
   const rank = kind === "win" ? i + 1 : kind === "alt" ? "R" + (i + 1) : "×";
-  const ok = (d.mode === "manual" && w.status === "ok") || (d.mode === "auto" && w.follow === true && kind === "win");
+  const ok = d.mode === "manual" && w.status === "ok";
   return `<div class="ticket reveal ${kind === "alt" ? "alt" : ""} ${kind === "out" ? "out" : ""} ${ok ? "confirmed" : ""}" style="animation-delay:${Math.min(i, 8) * 120}ms">
     <div class="rank">${rank}</div>
     <div class="body"><div class="who"><a href="https://www.instagram.com/${encodeURIComponent(e.username)}/" target="_blank" rel="noopener">@${esc(e.username)}</a>${badge}</div>
@@ -993,8 +963,7 @@ function renderResults() {
   $("#outTitle").hidden = !d.out.length;
   const s = settings();
   const short = d.winners.length < s.nWin ? ` Izvučeno je ${d.winners.length} od ${s.nWin} jer nema više učesnika.` : "";
-  const chk = d.checking ? " Proveravam da li pobednici prate " + d.accounts.map(a => "@" + a).join(", ") + "." : "";
-  $("#resMeta").textContent = `Izvučeno ${d.at.toLocaleString("sr-Latn-RS")} iz ${d.total} šansi (${d.users} učesnika). Kod žreba ${d.seed}.${short}${chk}`;
+  $("#resMeta").textContent = `Izvučeno ${d.at.toLocaleString("sr-Latn-RS")} iz ${d.total} šansi (${d.users} učesnika). Kod žreba ${d.seed}.${short}`;
   $$("[data-ok]").forEach(b => b.onclick = () => { d.winners[+b.dataset.ok].status = "ok"; renderResults(); });
   $$("[data-no]").forEach(b => b.onclick = () => {
     const i = +b.dataset.no;
@@ -1006,58 +975,12 @@ function renderResults() {
   });
 }
 
-/* ---------- Automatska provera praćenja (lokalni server) ---------- */
-async function verifyList(d, list) {
-  if (state.draw !== d) throw Object.assign(new Error("stale"), { code: "stale" });
-  const todo = list.filter(w => w.follow === undefined);
-  if (!todo.length) return;
-  const r = await srvApi("api/follows", { usernames: todo.map(w => w.e.username), accounts: d.accounts });
-  for (const w of todo) {
-    const res = r.results[w.e.username] || {};
-    const vals = Object.entries(res);
-    const missing = vals.filter(([, v]) => v === false).map(([k]) => "@" + k);
-    w.follow = missing.length ? false : vals.length && vals.every(([, v]) => v === true) ? true : null;
-    w.missing = missing.join(", ");
-  }
-  const bad = (r.accounts || []).filter(a => !a.ok || a.private);
-  if (bad.length) toast(bad.map(a => a.ok ? `@${a.username} je privatan nalog koji ne pratiš` : a.error).join(". "));
-}
-async function autoVerify(d) {
-  if (!d.accounts.length) { toast("Upiši nalog organizatora ili naloge koje pobednik mora da prati."); return; }
-  d.checking = true; renderResults();
-  $("#drawBtn").disabled = true; $("#drawBtnM").disabled = true;
-  try {
-    await verifyList(d, [...d.winners, ...d.alts]);
-    let guard = 0;
-    for (let i = 0; i < d.winners.length; i++) {
-      while (d.winners[i] && d.winners[i].follow === false) {
-        d.out.push(d.winners[i]);
-        let rep = d.alts.shift() || null;
-        if (!rep && guard++ < 30) { rep = drawOne(d); if (rep) { renderResults(); await verifyList(d, [rep]); } }
-        if (!rep) { d.winners.splice(i, 1); i--; break; }
-        d.winners[i] = rep;
-      }
-    }
-    while (d.alts.length < d.nAlt && guard++ < 30) {
-      const n = drawOne(d); if (!n) break;
-      await verifyList(d, [n]);
-      (n.follow === false ? d.out : d.alts).push(n);
-    }
-    const replaced = d.out.length;
-    toast(replaced ? `Provera gotova. ${replaced} ${plural(replaced, "učesnik ne prati", "učesnika ne prate", "učesnika ne prati")} i ${replaced === 1 ? "zamenjen je" : "zamenjeni su"}.` : "Provera gotova. Svi pobednici prate stranicu.");
-  } catch (e) {
-    if (e.code === "stale") return;
-    toast(e.message);
-    if (e.code === "login_required" || e.code === "checkpoint") refreshStatus();
-  } finally { d.checking = false; if (state.draw === d) renderResults(); renderList(); }
-}
-
 /* ---------- Izvoz ---------- */
 function b64e(str) { let s = ""; new TextEncoder().encode(str).forEach(x => s += String.fromCharCode(x)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function b64d(s) { const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))); }
 function shareUrl() {
   const d = state.draw;
-  const ok = w => (d.mode === "manual" && w.status === "ok") || (d.mode === "auto" && w.follow === true) ? 1 : 0;
+  const ok = w => d.mode === "manual" && w.status === "ok" ? 1 : 0;
   const p = { v: 2, s: d.seed, t: d.at.getTime(), n: d.total, u: d.users,
     w: d.winners.map(w => [w.e.username, w.e.text.slice(0, 140), ok(w)]),
     a: d.alts.map(w => [w.e.username, w.e.text.slice(0, 140), ok(w)]),
@@ -1130,194 +1053,106 @@ function showPublic() {
 }
 addEventListener("hashchange", () => { if (/^#r=/.test(location.hash) || $("#publicView").hidden === false) location.reload(); });
 
-/* ---------- Lokalni server (preuzimanje sa linka) ---------- */
-async function srvApi(path, body) {
-  const r = await fetch(path, { method: body ? "POST" : "GET", headers: body ? { "Content-Type": "application/json" } : {}, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
-  let j = null; try { j = await r.json(); } catch {}
-  if (!r.ok) { const e = new Error((j && j.error) || `Greška ${r.status}`); e.code = j && j.code; throw e; }
-  return j;
+/* ---------- Prijem komentara iz obeleživača ---------- */
+function markReady() { store.set("zreb-bm-ok", "1"); applyReady(); }
+function applyReady() {
+  const ready = store.get("zreb-bm-ok") === "1";
+  $("#srcPanel").classList.toggle("ready", ready);
+  $("#howToggle").hidden = !ready;
 }
-async function refreshStatus() {
-  try {
-    const j = await srvApi("api/status");
-    srv.ok = j && j.app === "zreb"; srv.user = srv.ok ? j.user : null;
-  } catch { srv.ok = false; srv.user = null; }
-  renderMode();
+$("#howToggle").onclick = () => { $("#srcPanel").classList.remove("ready"); $("#howToggle").hidden = true; };
+function setupTexts() {
+  const mod = IS_MAC ? "Cmd" : "Ctrl";
+  $$("kbd.mod").forEach(k => k.textContent = mod);
+  if (DIRECT) {
+    $("#step3Title").textContent = "Klikni „Otvori u Žrebu“";
+    $("#step3Text").textContent = "Kad obeleživač završi, komentari stižu ovde sami.";
+  } else {
+    $("#step3Title").textContent = "Klikni „Kopiraj za Žreb“, pa se vrati ovde";
+    $("#step3Text").innerHTML = `Pritisni <kbd>${mod}</kbd>+<kbd>V</kbd> bilo gde na ovoj strani.`;
+  }
 }
-function renderMode() {
-  $("#acct").hidden = !srv.ok;
-  $("#srvActions").hidden = !srv.ok;
-  $("#bmBox").hidden = srv.ok;
-  $("#linkHelp").textContent = srv.ok ? "Nalepi link i komentari se preuzimaju sami. Više objava se spaja u jedan žreb." : "Nalepi link, otvori objavu i klikni obeleživač.";
-  const auto = $("#optAuto input");
-  auto.disabled = !srv.ok;
-  $("#autoHint").textContent = srv.ok ? "Žreb proverava svakog pobednika i rezervu preko tvog Instagram naloga i menja one koji ne prate."
-    : "Radi kad je Žreb pokrenut na računaru (start-windows.bat ili start-mac.command).";
-  if (!srv.ok && auto.checked) { $("input[name=follow][value=none]").checked = true; syncSubs(); }
-  const a = $("#acct");
-  a.classList.toggle("on", !!srv.user);
-  $("#acctIcon").textContent = srv.user ? "check_circle" : "lock";
-  $("#acctText").innerHTML = srv.user ? `Preuzima se preko <b>@${esc(srv.user.username)}</b>` : "Prijavi se na Instagram da bi Žreb mogao da čita komentare.";
-  $("#acctBtn").innerHTML = srv.user ? '<span class="ms">logout</span>Odjavi' : '<span class="ms">login</span>Prijavi se';
+function importPayload(p, source) {
+  const post = p.post || {};
+  const wasSample = state.isSample;
+  let list = fromObjects(Array.isArray(p.comments) ? p.comments : []);
+  let posts = post.url ? [post] : [];
+  if ($("#mergeIn").checked && !wasSample && state.comments.length && !state.posts.some(x => x.url === post.url)) {
+    list = state.comments.concat(list);
+    posts = state.posts.concat(posts);
+    $("#mergeIn").checked = false;
+  }
+  setComments(list, posts.length > 1 ? `${posts.length} objave` : source, false, posts);
+  showPost(posts);
+  if (post.url) $("#link0").value = post.url;
+  adoptOwner(post.owner, wasSample);
+  evaluate();
+  markReady();
+  $("#waitBox").hidden = true;
+  $("#mergeWrap").hidden = false;
+  toast(`Stiglo je ${list.length} ${plural(list.length, "komentar", "komentara", "komentara")}`);
 }
-$("#acctBtn").onclick = async () => {
-  if (!srv.user) return openLogin();
-  try { await srvApi("api/logout", {}); } catch {}
-  toast("Odjavljen si iz Žreba"); refreshStatus();
-};
-
-/* Prijava */
-let pendingLogin = null, afterLogin = null;
-function openLogin(then) {
-  afterLogin = then || null;
-  pendingLogin = null;
-  $("#pwStep").hidden = false; $("#tfStep").hidden = true; $("#pwErr").textContent = ""; $("#ckErr").textContent = "";
-  $("#pwSubmit").innerHTML = '<span class="ms">login</span>Prijavi se';
-  const d = $("#loginDlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", "");
-  setTimeout(() => $("#igUser").focus(), 50);
+function zrebJson(txt) {
+  if (!/^\s*\{/.test(txt || "")) return null;
+  try { const j = JSON.parse(txt); return j && j.zreb && Array.isArray(j.comments) ? j : null; } catch { return null; }
 }
-function closeLogin() { const d = $("#loginDlg"); if (d.close) d.close(); else d.removeAttribute("open"); }
-$("#loginClose").onclick = closeLogin;
-async function loggedIn(user) {
-  srv.user = user; renderMode(); closeLogin();
-  $("#igPass").value = ""; $("#igCode").value = ""; $("#igCookie").value = "";
-  toast("Prijavljen kao @" + user.username);
-  const f = afterLogin; afterLogin = null; if (f) f();
-}
-$("#pwForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const btn = $("#pwSubmit"); btn.disabled = true; $("#pwErr").textContent = "";
-  try {
-    if (!pendingLogin) {
-      const r = await srvApi("api/login", { username: $("#igUser").value, password: $("#igPass").value });
-      if (r.status === "two_factor") {
-        pendingLogin = r.loginId;
-        $("#pwStep").hidden = true; $("#tfStep").hidden = false;
-        $("#tfHelp").textContent = `Instagram traži kod ${r.method}.`;
-        btn.innerHTML = '<span class="ms">verified</span>Potvrdi';
-        setTimeout(() => $("#igCode").focus(), 50);
-      } else await loggedIn(r.user);
-    } else {
-      const r = await srvApi("api/login/2fa", { loginId: pendingLogin, code: $("#igCode").value });
-      pendingLogin = null; await loggedIn(r.user);
-    }
-  } catch (err) {
-    $("#pwErr").textContent = err.message;
-    if (err.code === "checkpoint") $("#pwErr").textContent += " Ili koristi karticu Kolačić sessionid.";
-  } finally { btn.disabled = false; }
-});
-$("#ckForm").addEventListener("submit", async e => {
-  e.preventDefault(); $("#ckErr").textContent = "";
-  try { const r = await srvApi("api/session", { sessionid: $("#igCookie").value }); await loggedIn(r.user); }
-  catch (err) { $("#ckErr").textContent = err.message; }
-});
-
-/* Preuzimanje */
-const IG_URL = /^(?:https?:\/\/)?(?:www\.|m\.)?instagram\.com\/(?:[A-Za-z0-9._]+\/)?(p|reels?|tv)\/([A-Za-z0-9_-]+)/i;
-function normLink(s) {
-  const m = String(s).trim().match(IG_URL); if (!m) return null;
-  return `https://www.instagram.com/${m[1].toLowerCase().startsWith("reel") ? "reel" : m[1].toLowerCase()}/${m[2]}/`;
-}
-function readLinks() {
-  const urls = [], bad = [];
-  $$(".linkIn").map(i => i.value.trim()).filter(Boolean).forEach(r => { const n = normLink(r); if (!n) bad.push(r); else if (!urls.includes(n)) urls.push(n); });
-  return { urls, bad };
-}
-let job = null;
-function setBusy(on) { $("#prog").hidden = !on; $("#fetchBtn").disabled = on; if (on) { $("#drawBtn").disabled = true; $("#drawBtnM").disabled = true; } else renderList(); }
-function progress(j) {
-  const bar = $("#progBar"), i = $("i", bar);
-  if (j.total) { bar.classList.add("det"); i.style.width = Math.min(100, Math.round(j.count / j.total * 100)) + "%"; i.style.transform = "none"; }
-  else { bar.classList.remove("det"); i.style.width = ""; i.style.transform = ""; }
-  let t = j.phase || "Preuzimam";
-  if (j.count) t = `Preuzeto ${j.count}${j.total ? " od oko " + j.total : ""} komentara`;
-  if (j.replies) t += ` · odgovori ${j.replies.done}/${j.replies.total}`;
-  if (j.waiting) t += ` · Instagram traži pauzu, nastavljam za ${j.waiting} s`;
-  const left = j.total && j.count ? Math.max(0, Math.round((j.total - j.count) / 15 * 1.4)) : null;
-  if (left && left > 20 && !j.waiting) t += ` · još oko ${left >= 90 ? Math.round(left / 60) + " min" : left + " s"}`;
-  $("#progText").textContent = t;
-}
-async function fetchComments() {
-  if (job) return;
-  const { urls, bad } = readLinks();
-  if (bad.length) return setStatus("Ovo nije link Instagram objave: " + esc(bad[0]), "bad");
-  if (!urls.length) { toast("Nalepi link objave"); $(".linkIn").focus(); return; }
-  if (!srv.ok) { window.open(urls[0], "_blank", "noopener"); return; }
-  if (!srv.user) return openLogin(fetchComments);
-  setStatus("");
-  setBusy(true); progress({ phase: "Otvaram objavu", count: 0 });
-  try {
-    job = await srvApi("api/scrape", { urls, replies: $("#replies").checked, limit: parseInt($("#limitIn").value, 10) || 0 });
-    let j = job;
-    while (j.status === "running") {
-      await new Promise(r => setTimeout(r, 1000));
-      j = await srvApi("api/jobs/" + job.id);
-      progress(j);
-      if (j.posts && j.posts.length) showPost(j.posts);
-    }
-    if (j.status === "cancelled") { setStatus("Preuzimanje je otkazano."); return; }
-    if (j.status === "error") {
-      setStatus(esc(j.error), "bad");
-      if (j.code === "login_required" || j.code === "checkpoint") { await refreshStatus(); openLogin(fetchComments); }
-      return;
-    }
-    const data = await srvApi("api/jobs/" + job.id + "/comments");
-    const list = fromObjects(data.comments);
-    const wasSample = state.isSample;
-    setComments(list, urls.length > 1 ? `${urls.length} objave` : "sa Instagrama", false, data.posts);
-    showPost(data.posts);
-    adoptOwner(data.posts[0] && data.posts[0].owner, wasSample);
-    evaluate();
-    toast(`Preuzeto ${list.length} ${plural(list.length, "komentar", "komentara", "komentara")}`);
-  } catch (e) {
-    setStatus(esc(e.message), "bad");
-    if (e.code === "login_required") { await refreshStatus(); openLogin(fetchComments); }
-  } finally { job = null; setBusy(false); }
-}
-$("#fetchBtn").onclick = fetchComments;
-$("#cancelBtn").onclick = () => { if (job) srvApi("api/jobs/" + job.id + "/cancel", {}).catch(() => {}); };
-$("#links").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.matches(".linkIn")) { e.preventDefault(); fetchComments(); } });
-$("#links").addEventListener("paste", e => {
-  if (!srv.ok || !srv.user || $$(".linkIn").length !== 1) return;
-  setTimeout(() => { if (normLink(e.target.value)) fetchComments(); }, 0);
-});
-let linkN = 1;
-$("#addLink").onclick = () => {
-  if ($$(".linkIn").length >= 10) return toast("Najviše 10 objava u jednom žrebu");
-  const n = linkN++, row = document.createElement("div");
-  row.className = "link-row";
-  row.innerHTML = `<input type="url" id="link${n}" class="linkIn" inputmode="url" autocomplete="off" placeholder="https://www.instagram.com/p/..." aria-label="Link objave"><button class="icon-btn" type="button" aria-label="Ukloni objavu"><span class="ms">close</span></button>`;
-  $("button", row).onclick = () => row.remove();
-  $("#links").appendChild(row); $("input", row).focus();
-};
-
-/* ---------- Obeleživač ---------- */
-function bookmarkletHref() {
-  const target = location.protocol === "http:" || location.protocol === "https:" ? location.href.split("#")[0] : "https://gru-webdesign.github.io/Winner_picker/";
-  return "javascript:" + encodeURIComponent("(" + zrebBookmarklet.toString() + ")(" + JSON.stringify(target) + ");void 0");
-}
-$("#bmLink").href = bookmarkletHref();
-$("#bmLink").onclick = e => { e.preventDefault(); toast("Prevuci dugme Žreb na traku sa obeleživačima, pa ga klikni na Instagram objavi."); };
-$("#openPostBtn").onclick = () => {
-  const { urls } = readLinks();
-  if (!urls.length) { toast("Nalepi link objave"); $(".linkIn").focus(); return; }
-  window.open(urls[0], "_blank", "noopener");
-};
 addEventListener("message", e => {
   if (!IMPORT_ORIGINS.includes(e.origin) || !e.data || e.data.type !== "zreb-import") return;
   try { e.source.postMessage({ type: "zreb-ack", id: e.data.id }, e.origin); } catch {}
   if (state.lastImport === e.data.id) return;
   state.lastImport = e.data.id;
-  const p = e.data.payload || {};
-  const post = p.post || {};
-  const wasSample = state.isSample;
-  setComments(fromObjects(Array.isArray(p.comments) ? p.comments : []), "iz obeleživača", false, post.url ? [post] : []);
-  if (post.url) { $("#link0").value = post.url; showPost([post]); }
-  adoptOwner(post.owner, wasSample);
-  evaluate();
-  toast(`Stiglo je ${state.comments.length} komentara sa Instagrama`);
+  importPayload(e.data.payload || {}, "sa Instagrama");
   window.focus();
 });
+document.addEventListener("paste", e => {
+  const t = e.target;
+  const inField = t && t.matches && t.matches("input, textarea");
+  const txt = e.clipboardData ? e.clipboardData.getData("text") : "";
+  const data = zrebJson(txt);
+  if (data) { e.preventDefault(); importPayload(data, "sa Instagrama"); return; }
+  if (!inField && txt.trim()) toast("U kopiranom tekstu nisu komentari. Klikni Žreb na Instagram objavi, pa „Kopiraj za Žreb“.");
+});
+function normLink(s) {
+  const m = String(s).trim().match(/^(?:https?:\/\/)?(?:www\.|m\.)?instagram\.com\/(?:[A-Za-z0-9._]+\/)?(p|reels?|tv)\/([A-Za-z0-9_-]+)/i);
+  if (!m) return null;
+  return `https://www.instagram.com/${m[1].toLowerCase().startsWith("reel") ? "reel" : m[1].toLowerCase()}/${m[2]}/`;
+}
+$("#openPostBtn").onclick = () => {
+  const v = $("#link0").value.trim();
+  if (!v) { toast("Nalepi link objave"); $("#link0").focus(); return; }
+  const u = normLink(v);
+  if (!u) { setStatus("Ovo nije link Instagram objave.", "bad"); return; }
+  setStatus("");
+  window.open(u, "_blank", "noopener");
+};
+$("#link0").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#openPostBtn").click(); } });
+
+/* ---------- Obeleživač ---------- */
+function bookmarkletHref() {
+  const target = DIRECT ? location.href.split("#")[0] : null;
+  return "javascript:" + encodeURIComponent("(" + zrebBookmarklet.toString() + ")(" + JSON.stringify(target) + ");void 0");
+}
+$("#bmLink").href = bookmarkletHref();
+$("#bmLink").onclick = e => { e.preventDefault(); toast("Prevuci dugme Žreb mišem na traku sa obeleživačima."); };
+$("#copyBmBtn").onclick = () => copyText(bookmarkletHref(), "Kod obeleživača je kopiran");
+
+/* ---------- Pravila se pamte u ovom pregledaču ---------- */
+const RULE_IDS = ["nWin", "nAlt", "minTags", "owner", "distinctTags", "noSelfTag", "maxPer", "repeat", "keyword", "blacklist", "replies"];
+function saveRules() {
+  const o = {};
+  RULE_IDS.forEach(id => { const el = $("#" + id); o[id] = el.type === "checkbox" ? el.checked : el.value; });
+  o.mode = $("input[name=mode]:checked").value;
+  o.follow = $("input[name=follow]:checked").value;
+  if (!state.isSample) store.set("zreb-rules", JSON.stringify(o));
+}
+function loadRules() {
+  let o; try { o = JSON.parse(store.get("zreb-rules") || "null"); } catch {}
+  if (!o) return false;
+  RULE_IDS.forEach(id => { const el = $("#" + id); if (!el || !(id in o)) return; if (el.type === "checkbox") el.checked = !!o[id]; else el.value = o[id]; });
+  const m = $(`input[name=mode][value="${o.mode}"]`); if (m) m.checked = true;
+  const f = $(`input[name=follow][value="${o.follow}"]`); if (f) f.checked = true;
+  return true;
+}
 
 /* ---------- Ostali unosi ---------- */
 function importFile(name, txt) {
@@ -1329,7 +1164,9 @@ function importFile(name, txt) {
 $("#parseBtn").onclick = () => {
   const txt = $("#pasteBox").value;
   try {
-    if (/^\s*[\[{]/.test(txt)) importFile("nalepljen JSON", txt);
+    const z = zrebJson(txt);
+    if (z) importPayload(z, "sa Instagrama");
+    else if (/^\s*[\[{]/.test(txt)) importFile("nalepljen JSON", txt);
     else { const l = parsePaste(txt); setComments(l, "nalepljeno"); if (!l.length) toast("Nisam prepoznao komentare. Proveri format."); }
   } catch (e) { setStatus("Tekst nije moguće pročitati: " + esc(e.message), "bad"); }
 };
@@ -1349,15 +1186,14 @@ $("#followIn").onchange = async e => {
 };
 
 /* ---------- Reaktivnost pravila ---------- */
-$("#rules").addEventListener("input", () => { syncSubs(); evaluate(); });
-$("#rules").addEventListener("change", () => { syncSubs(); evaluate(); });
+$("#rules").addEventListener("input", () => { syncSubs(); evaluate(); saveRules(); });
+$("#rules").addEventListener("change", () => { syncSubs(); evaluate(); saveRules(); });
 $("#q").addEventListener("input", e => { state.q = e.target.value; state.shown = 120; renderList(); });
 $$(".filters button").forEach(b => b.onclick = () => { state.filter = b.dataset.f; $$(".filters button").forEach(x => x.setAttribute("aria-pressed", x === b)); state.shown = 120; renderList(); });
 function syncSubs() {
   const f = $("input[name=follow]:checked").value;
   $("#maxWrap").hidden = $("input[name=mode]:checked").value !== "each";
   $("#followWrap").hidden = f !== "list";
-  $("#autoWrap").hidden = f !== "auto";
 }
 
 /* ---------- Primer ---------- */
@@ -1396,7 +1232,7 @@ djordje_p: @natasa.lj @ivan.miletic
 sofija.k: @djordje_p @natasa.lj
 nemanja.r: @sofija.k @djordje_p
 andjela.b: @nemanja.r @sofija.k`;
-  $("#pasteBox").value = S; $("#owner").value = "@pekara.zrno";
+  $("#pasteBox").value = S; $("#owner").value = "@pekara.zrno"; $("#mergeWrap").hidden = true;
   setComments(parsePaste(S), "primer", true);
 }
 
@@ -1409,12 +1245,15 @@ document.fonts && document.fonts.ready.then(() => {
   if ([...document.fonts].some(f => /Material Symbols/.test(f.family) && f.status === "loaded")) document.documentElement.classList.remove("no-icons");
 });
 
+setupTexts();
+applyReady();
+const hadRules = loadRules();
 syncSubs();
-renderMode();
 if (!showPublic()) {
-  if (location.hash === "#import") { setComments([], ""); setStatus("Čekam komentare sa Instagrama…"); history.replaceState(null, "", location.pathname + location.search); }
-  else loadSample();
-  refreshStatus();
+  if (location.hash === "#import" || hadRules) {
+    setComments([], ""); setStatus("");
+    if (location.hash === "#import") history.replaceState(null, "", location.pathname + location.search);
+  } else loadSample();
 }
 })();
 </script>
