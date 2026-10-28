@@ -41,7 +41,7 @@ const DEFAULT_API = "https://zreb-api.tvoje-ime.workers.dev";
 Commit, push. Posetiocima više ne treba nikakvo podešavanje.
 
 ### 4. GitHub Pages
-Repo → Settings → Pages → Deploy from branch → `main` / root. Sajt: `https://gru-webdesign.github.io/winner_picker/`.
+Repo → Settings → Pages → Deploy from branch → `main` / root. Sajt: `https://gru-webdesign.github.io/Winner_picker/`.
 
 **Bez Workera:** u aplikaciji klikni zupčanik i unesi svoj Apify token. Čuva se samo u tom pregledaču. Dobro za ličnu upotrebu, ne za javni sajt.
 
