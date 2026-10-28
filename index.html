@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Žreb Instagram</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Izvlačenje pobednika nagradne igre iz komentara na Instagram objavi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=block,casino,check_circle,close,content_copy,content_paste,download,emoji_events,group,info,link,person,refresh,search,tune,upload_file,verified&display=block">
+<style>
+/* Layout: dve kolone na desktopu (unos + pravila levo, učesnici + rezultati desno), jedna kolona na telefonu sa donjom trakom za izvlačenje */
+:root{
+  --bg:#F3F4F7; --surface:#FFFFFF; --surface-2:#F8F9FB; --fg:#16171C; --muted:#5D6170; --line:#E1E3E9;
+  --accent:#BE1F57; --accent-soft:#FBE7EE; --on-accent:#FFFFFF;
+  --ok:#1E7A4C; --ok-soft:#E3F3EA; --warn:#9A5B00; --warn-soft:#FBF0DC; --bad:#B42318; --bad-soft:#FCE8E6;
+  --shadow:0 1px 2px rgb(22 23 28 / .05), 0 8px 24px -12px rgb(22 23 28 / .12);
+  --font:"Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --r:14px; --r-sm:9px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101115; --surface:#191A20; --surface-2:#1F2027; --fg:#ECEDF2; --muted:#9A9DAA; --line:#2B2D36;
+  --accent:#F2668F; --accent-soft:#3A1A26; --on-accent:#1A0710;
+  --ok:#5CC98E; --ok-soft:#14291E; --warn:#E8B04E; --warn-soft:#2E2412; --bad:#F2877C; --bad-soft:#331A18;
+  --shadow:0 1px 2px rgb(0 0 0 / .3), 0 8px 24px -12px rgb(0 0 0 / .5); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#101115; --surface:#191A20; --surface-2:#1F2027; --fg:#ECEDF2; --muted:#9A9DAA; --line:#2B2D36;
+  --accent:#F2668F; --accent-soft:#3A1A26; --on-accent:#1A0710;
+  --ok:#5CC98E; --ok-soft:#14291E; --warn:#E8B04E; --warn-soft:#2E2412; --bad:#F2877C; --bad-soft:#331A18;
+  --shadow:0 1px 2px rgb(0 0 0 / .3), 0 8px 24px -12px rgb(0 0 0 / .5); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 96px}
+@media (min-width:1000px){ body{padding-block:0 40px} }
+h1,h2,h3{text-wrap:balance;margin:0;letter-spacing:-.01em}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;vertical-align:middle;
+  font-variation-settings:"FILL" 0,"wght" 450,"opsz" 20;user-select:none;width:1em;overflow:hidden;flex:none}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1280px;margin:0 auto}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px 18px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:38px;height:38px;border-radius:11px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center}
+.mark .ms{font-size:22px;font-variation-settings:"FILL" 1,"wght" 500,"opsz" 24}
+.brand h1{font-size:20px;font-weight:700}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+.theme-btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;cursor:pointer;color:var(--muted);font-size:13px}
+
+.grid{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){ .grid{grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr);align-items:start} .col-right{position:sticky;top:16px} }
+.col{display:grid;gap:18px;min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 0}
+.panel-h h2{font-size:16px;font-weight:600;display:flex;align-items:center;gap:9px}
+.step{font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:2px 7px;font-weight:500}
+.panel-b{padding:14px 18px 18px;display:grid;gap:14px}
+
+.seg{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:4px;overflow-x:auto}
+.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:8px 10px;cursor:pointer;color:var(--muted);font-weight:500;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+
+label.lbl{display:block;font-size:13px;font-weight:500;margin-bottom:6px}
+.help{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+input[type=text],input[type=number],input[type=password],input[type=datetime-local],textarea,select{
+  width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 11px;outline:none;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:150px;font-family:var(--mono);font-size:13px;line-height:1.55}
+::placeholder{color:var(--muted);opacity:.85}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
+  padding:9px 14px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;transition:transform .12s, background .15s}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.status{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.status.ok{color:var(--ok)} .status.bad{color:var(--bad)}
+
+.drop{border:1.5px dashed var(--line);border-radius:var(--r);padding:22px;text-align:center;color:var(--muted);cursor:pointer;background:var(--surface-2)}
+.drop.over{border-color:var(--accent);color:var(--fg)}
+.drop strong{color:var(--fg)}
+
+.fields{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.fields .full{grid-column:1/-1}
+@media (max-width:520px){ .fields{grid-template-columns:minmax(0,1fr)} }
+.num{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2);overflow:hidden}
+.num input{border:0;background:transparent;text-align:center;font-family:var(--mono);font-variant-numeric:tabular-nums;border-radius:0;-moz-appearance:textfield;appearance:textfield}
+.num input::-webkit-inner-spin-button{appearance:none;margin:0}
+.num button{border:0;background:transparent;width:40px;cursor:pointer;font-size:18px;color:var(--muted)}
+.num button:hover{color:var(--fg)}
+
+.choice{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;cursor:pointer;background:var(--surface-2)}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.opt input{accent-color:var(--accent);margin-top:3px;flex:none}
+.opt b{font-weight:600;font-size:14px;display:block}
+.opt span{font-size:12.5px;color:var(--muted)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.check input{accent-color:var(--accent);margin-top:4px;flex:none;width:16px;height:16px}
+.check small{display:block;color:var(--muted);font-size:12.5px}
+details.adv{border-top:1px solid var(--line);padding-top:12px}
+details.adv summary{cursor:pointer;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;list-style:none}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv[open] summary{margin-bottom:14px}
+.sub{padding-left:26px}
+.sub[hidden]{display:none!important}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stat{padding:12px 14px;border-right:1px solid var(--line);min-width:0}
+.stat:last-child{border-right:0}
+.stat .v{font-family:var(--mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:12px;color:var(--muted)}
+.stat.hl .v{color:var(--accent)}
+@media (max-width:520px){ .stats{grid-template-columns:repeat(2,minmax(0,1fr))} .stat:nth-child(2){border-right:0} .stat:nth-child(-n+2){border-bottom:1px solid var(--line)} }
+.reasons{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;border-radius:999px;padding:3px 10px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-variant-numeric:tabular-nums}
+.chip b{color:var(--fg);font-weight:600}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.search{position:relative;flex:1;min-width:160px}
+.search .ms{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px}
+.search input{padding-left:34px}
+.filters{display:flex;gap:4px}
+.filters button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 11px;font-size:13px;cursor:pointer;color:var(--muted)}
+.filters button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+.list{border:1px solid var(--line);border-radius:var(--r);max-height:430px;overflow:auto;background:var(--surface-2)}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 14px;border-bottom:1px solid var(--line);align-items:start}
+.item:last-child{border-bottom:0}
+.item .u{font-weight:600;font-size:14px;overflow-wrap:anywhere}
+.item .t{grid-column:1/2;font-size:13.5px;color:var(--muted);overflow-wrap:anywhere}
+.item .t .m{color:var(--accent);font-weight:500}
+.item .ts{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:6px;font-weight:400}
+.pill{font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap;grid-row:1/3;grid-column:2;align-self:center}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.empty{padding:32px 18px;text-align:center;color:var(--muted);font-size:14px}
+.more{display:block;width:100%;border:0;border-top:1px solid var(--line);background:transparent;padding:10px;cursor:pointer;color:var(--accent);font-weight:600}
+
+.draw-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--accent-soft);border-radius:var(--r);padding:14px 16px}
+.draw-cta p{margin:0;font-size:14px}
+.draw-cta .btn{padding:12px 18px;font-size:15px}
+.mobile-bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
+  padding:10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));display:flex;gap:10px;align-items:center}
+.mobile-bar .btn{flex:1;padding:13px}
+.mobile-bar small{color:var(--muted);font-size:12.5px;white-space:nowrap}
+@media (min-width:1000px){ .mobile-bar{display:none} }
+
+/* reel + results */
+.reel{height:120px;display:grid;place-items:center;border-radius:var(--r);background:var(--surface-2);border:1px solid var(--line);overflow:hidden;position:relative}
+.reel .name{font-family:var(--mono);font-size:clamp(22px,5vw,32px);font-weight:500;color:var(--accent);overflow-wrap:anywhere;text-align:center;padding:0 12px}
+.reel .cap{position:absolute;bottom:10px;font-size:12px;color:var(--muted)}
+.winners{display:grid;gap:12px}
+.ticket{--notch:11px;position:relative;display:grid;grid-template-columns:64px minmax(0,1fr);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);
+  -webkit-mask:radial-gradient(circle var(--notch) at 64px 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle var(--notch) at 64px 100%,#0000 98%,#000) bottom/100% 51% no-repeat;
+  mask:radial-gradient(circle var(--notch) at 64px 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle var(--notch) at 64px 100%,#0000 98%,#000) bottom/100% 51% no-repeat}
+.ticket .rank{display:grid;place-items:center;border-right:1.5px dashed var(--line);font-family:var(--mono);font-size:22px;font-weight:500;color:var(--accent)}
+.ticket .body{padding:12px 14px;display:grid;gap:4px;min-width:0}
+.ticket .who{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ticket .who a{font-weight:700;font-size:17px;color:var(--fg);text-decoration:none;overflow-wrap:anywhere}
+.ticket .who a:hover{text-decoration:underline}
+.ticket .txt{font-size:13.5px;color:var(--muted);overflow-wrap:anywhere}
+.ticket .txt .m{color:var(--accent)}
+.ticket .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.ticket.confirmed{border-color:var(--ok)}
+.ticket.alt{opacity:.92}
+.ticket.alt .rank{color:var(--muted);font-size:15px}
+.badge{font-size:11.5px;font-weight:600;border-radius:6px;padding:2px 7px}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+.badge.wait{background:var(--warn-soft);color:var(--warn)}
+.reveal{animation:pop .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.seed{font-family:var(--mono);font-size:13px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-variant-numeric:tabular-nums}
+.sec-title{font-size:13px;font-weight:600;color:var(--muted);margin-top:4px}
+
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.post{border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;background:var(--surface-2);cursor:pointer;text-align:left;padding:0;display:grid}
+.post img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--line);max-width:100%}
+.post div{padding:7px 9px;font-size:12px;color:var(--muted)}
+.post div b{color:var(--fg);font-variant-numeric:tabular-nums}
+.post[aria-pressed="true"]{border-color:var(--accent);outline:2px solid var(--accent)}
+.note{font-size:12.5px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;display:flex;gap:8px}
+.note .ms{font-size:18px;color:var(--accent)}
+.banner{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:13px;background:var(--warn-soft);color:var(--warn);border-radius:var(--r-sm);padding:9px 12px}
+.banner button{background:transparent;border:0;color:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:14px;z-index:40;box-shadow:var(--shadow)}
+@media (min-width:1000px){ .toast{bottom:28px} }
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mark"><span class="ms">emoji_events</span></div>
+      <div><h1>Žreb</h1><p>Izvlačenje pobednika iz komentara na Instagram objavi</p></div>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Tema: sistem</button>
+  </header>
+
+  <div class="grid">
+    <div class="col">
+      <!-- 1. Komentari -->
+      <section class="panel" aria-labelledby="h-src">
+        <div class="panel-h"><h2 id="h-src"><span class="step">1</span> Komentari</h2><span class="status" id="srcStatus"></span></div>
+        <div class="panel-b">
+          <div class="seg" role="tablist">
+            <button role="tab" aria-selected="true" data-tab="paste" type="button"><span class="ms">content_paste</span>Nalepi</button>
+            <button role="tab" aria-selected="false" data-tab="file" type="button"><span class="ms">upload_file</span>Fajl</button>
+            <button role="tab" aria-selected="false" data-tab="api" type="button"><span class="ms">link</span>Instagram API</button>
+          </div>
+
+          <div data-pane="paste">
+            <label class="lbl" for="pasteBox">Komentari</label>
+            <textarea id="pasteBox" spellcheck="false" placeholder="ana.markovic: Učestvujem! @mila.j @nikola_p"></textarea>
+            <p class="help">Nalepi komentare kopirane sa instagram.com ili jedan po redu u obliku <code>korisnik: tekst</code>. Prepoznaju se i blokovi „ime, vreme, komentar, Odgovori“.</p>
+            <div class="row" style="margin-top:10px">
+              <button class="btn primary" id="parseBtn" type="button">Učitaj komentare</button>
+              <button class="btn ghost" id="sampleBtn" type="button">Primer</button>
+            </div>
+          </div>
+
+          <div data-pane="file" hidden>
+            <label class="drop" id="drop" for="fileIn">
+              <span class="ms" style="font-size:28px">upload_file</span><br>
+              <strong>Izaberi ili prevuci fajl</strong><br>
+              <span style="font-size:13px">CSV, JSON ili TXT. Kolone: username, text, timestamp</span>
+            </label>
+            <input type="file" id="fileIn" accept=".csv,.json,.txt,text/csv,application/json,text/plain" hidden>
+            <p class="help">Radi sa izvozom iz drugih alata za komentare i sa JSON odgovorom Instagram Graph API-ja.</p>
+          </div>
+
+          <div data-pane="api" hidden>
+            <div class="note"><span class="ms">info</span><span>Za poslovni ili kreatorski Instagram nalog povezan sa Facebook stranicom. Token napravi u Graph API Explorer-u sa dozvolama <code>instagram_basic</code>, <code>instagram_manage_comments</code>, <code>pages_show_list</code>. Token ostaje samo u ovom prozoru.</span></div>
+            <div style="margin-top:12px">
+              <label class="lbl" for="tokenIn">Access token</label>
+              <input type="password" id="tokenIn" autocomplete="off" placeholder="EAAG...">
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn primary" id="loadPostsBtn" type="button">Učitaj moje objave</button>
+            </div>
+            <div class="posts" id="posts" style="margin-top:12px"></div>
+            <div style="margin-top:12px">
+              <label class="lbl" for="mediaIn">Ili unesi ID objave</label>
+              <div class="row"><input type="text" id="mediaIn" placeholder="17895695668004550" style="flex:1;min-width:0"><button class="btn" id="loadCommentsBtn" type="button">Preuzmi komentare</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Pravila -->
+      <section class="panel" aria-labelledby="h-rules">
+        <div class="panel-h"><h2 id="h-rules"><span class="step">2</span> Pravila</h2></div>
+        <form class="panel-b" id="rules" onsubmit="return false">
+          <div class="fields">
+            <div><label class="lbl" for="nWin">Broj pobednika</label>
+              <div class="num"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="nWin" type="number" min="1" max="100" value="1"><button type="button" data-step="1" aria-label="Više">+</button></div></div>
+            <div><label class="lbl" for="nAlt">Rezerve</label>
+              <div class="num"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="nAlt" type="number" min="0" max="20" value="2"><button type="button" data-step="1" aria-label="Više">+</button></div></div>
+            <div><label class="lbl" for="minTags">Minimum tagova u komentaru</label>
+              <div class="num"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="minTags" type="number" min="0" max="20" value="2"><button type="button" data-step="1" aria-label="Više">+</button></div></div>
+            <div><label class="lbl" for="owner">Tvoj Instagram nalog</label>
+              <input type="text" id="owner" placeholder="@tvoja.stranica" autocomplete="off"></div>
+            <label class="check full"><input type="checkbox" id="distinctTags" checked><span>Tagovi se ne ponavljaju<small>Ista tagovana osoba se računa samo u prvom komentaru istog korisnika.</small></span></label>
+            <label class="check full"><input type="checkbox" id="noSelfTag" checked><span>Ne računaj tag sebe i tvog naloga</span></label>
+          </div>
+
+          <div>
+            <span class="lbl">Koji komentari se računaju</span>
+            <div class="choice">
+              <label class="opt"><input type="radio" name="mode" value="each" checked><div><b>Svaki komentar je jedna šansa</b><span>Ko komentariše više puta, ima više šansi.</span></div></label>
+              <label class="opt"><input type="radio" name="mode" value="user"><div><b>Jedan korisnik, jedna šansa</b><span>Računa se samo prvi ispravan komentar.</span></div></label>
+            </div>
+            <div class="sub" id="maxWrap" style="margin-top:10px">
+              <label class="lbl" for="maxPer">Najviše šansi po korisniku (0 = bez limita)</label>
+              <div class="num" style="max-width:180px"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="maxPer" type="number" min="0" max="999" value="0"><button type="button" data-step="1" aria-label="Više">+</button></div>
+            </div>
+          </div>
+
+          <label class="check"><input type="checkbox" id="repeat"><span>Isti korisnik može da osvoji više puta<small>Inače se posle izvlačenja ostale šanse tog korisnika uklanjaju.</small></span></label>
+
+          <div>
+            <span class="lbl">Da li korisnik prati stranicu</span>
+            <div class="choice">
+              <label class="opt"><input type="radio" name="follow" value="none" checked><div><b>Ne proveravaj</b></div></label>
+              <label class="opt"><input type="radio" name="follow" value="manual"><div><b>Ručna potvrda pobednika</b><span>Otvoriš profil, potvrdiš ili zameniš rezervom.</span></div></label>
+              <label class="opt"><input type="radio" name="follow" value="list"><div><b>Uporedi sa listom pratilaca</b><span>Učitaj followers fajl iz Instagram izvoza podataka ili TXT listu.</span></div></label>
+            </div>
+            <div class="sub" id="followWrap" hidden style="margin-top:10px">
+              <div class="row"><label class="btn sm" for="followIn"><span class="ms">group</span>Učitaj pratioce</label><span class="status" id="followStatus">Nije učitano</span></div>
+              <input type="file" id="followIn" accept=".json,.txt,.csv,.html" hidden>
+              <p class="help">Instagram → Podešavanja → Centar naloga → Preuzmi informacije → Pratioci i praćenja, format JSON. Fajl se zove <code>followers_1.json</code>.</p>
+            </div>
+          </div>
+
+          <details class="adv">
+            <summary><span class="ms">tune</span>Dodatni uslovi</summary>
+            <div class="fields">
+              <div><label class="lbl" for="keyword">Obavezna reč ili hashtag</label><input type="text" id="keyword" placeholder="#nagradnaigra"></div>
+              <div><label class="lbl" for="deadline">Rok za komentare</label><input type="datetime-local" id="deadline"></div>
+              <div class="full"><label class="lbl" for="blacklist">Isključeni nalozi</label><textarea id="blacklist" style="min-height:70px" placeholder="@zaposleni1, @partner.nalog"></textarea><p class="help">Odvoji zarezom ili novim redom.</p></div>
+              <label class="check full"><input type="checkbox" id="replies"><span>Računaj i odgovore na komentare</span></label>
+              <div class="full"><label class="lbl" for="seedIn">Kod žreba (opciono)</label><input type="text" id="seedIn" placeholder="Prazno = nasumičan" autocomplete="off"><p class="help">Isti kod i isti komentari daju isti rezultat. Tako svako može da proveri izvlačenje.</p></div>
+            </div>
+          </details>
+        </form>
+      </section>
+    </div>
+
+    <div class="col col-right">
+      <!-- 3. Učesnici -->
+      <section class="panel" aria-labelledby="h-part">
+        <div class="panel-h"><h2 id="h-part"><span class="step">3</span> Učesnici</h2></div>
+        <div class="panel-b">
+          <div class="banner" id="sampleBanner" hidden><span>Prikazani su primer komentari.</span><button type="button" id="clearSample">Obriši primer</button></div>
+          <div class="stats">
+            <div class="stat"><div class="v" id="sTotal">0</div><div class="k">komentara</div></div>
+            <div class="stat hl"><div class="v" id="sValid">0</div><div class="k">važećih šansi</div></div>
+            <div class="stat"><div class="v" id="sUsers">0</div><div class="k">učesnika</div></div>
+            <div class="stat"><div class="v" id="sOut">0</div><div class="k">isključeno</div></div>
+          </div>
+          <div class="reasons" id="reasons"></div>
+          <div class="toolbar">
+            <div class="search"><span class="ms">search</span><input type="text" id="q" placeholder="Pretraži korisnika ili tekst" aria-label="Pretraga"></div>
+            <div class="filters" role="group" aria-label="Filter">
+              <button type="button" data-f="all" aria-pressed="true">Svi</button>
+              <button type="button" data-f="ok" aria-pressed="false">Važeći</button>
+              <button type="button" data-f="bad" aria-pressed="false">Isključeni</button>
+            </div>
+          </div>
+          <div class="list" id="list"></div>
+          <div class="draw-cta" id="drawCta">
+            <p id="ctaText">Učitaj komentare da bi izvukao pobednike.</p>
+            <button class="btn primary" id="drawBtn" type="button" disabled><span class="ms">casino</span>Izvuci pobednike</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Rezultati -->
+      <section class="panel" id="results" hidden aria-labelledby="h-res">
+        <div class="panel-h"><h2 id="h-res"><span class="step">4</span> Pobednici</h2><span class="seed" id="seedOut" title="Kod žreba"></span></div>
+        <div class="panel-b">
+          <div class="reel" id="reel" hidden><div class="name" id="reelName"></div><div class="cap">Izvlačenje u toku</div></div>
+          <div class="winners" id="winners"></div>
+          <div class="sec-title" id="altTitle" hidden>Rezerve</div>
+          <div class="winners" id="alts"></div>
+          <p class="help" id="resMeta"></p>
+          <div class="row">
+            <button class="btn" id="copyBtn" type="button"><span class="ms">content_copy</span>Kopiraj rezultate</button>
+            <button class="btn" id="imgBtn" type="button"><span class="ms">download</span>Slika za story</button>
+            <button class="btn ghost" id="againBtn" type="button"><span class="ms">refresh</span>Izvuci ponovo</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <footer>Izvlačenje se radi u tvom pregledaču. Komentari i tokeni se nigde ne šalju, osim Instagram API-ju kad ga sam pokreneš.</footer>
+</div>
+
+<div class="mobile-bar"><small id="mbText">0 šansi</small><button class="btn primary" id="drawBtnM" type="button" disabled><span class="ms">casino</span>Izvuci pobednike</button></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+"use strict";
+const GRAPH = "https://graph.facebook.com/v23.0";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const normU = s => String(s || "").trim().replace(/^@+/, "").toLowerCase();
+const MENTION = /@([a-z0-9._]{1,30})/gi;
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} }
+};
+
+const state = { comments: [], source: "", isSample: false, followers: null, rows: [], entries: [], filter: "all", q: "", shown: 120, draw: null };
+
+/* ---------- Tema ---------- */
+const themes = ["system", "light", "dark"], themeLabel = { system: "sistem", light: "svetla", dark: "tamna" };
+let theme = store.get("zreb-theme") || "system";
+function applyTheme() {
+  if (theme === "system") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", theme);
+  $("#themeBtn").textContent = "Tema: " + themeLabel[theme];
+}
+$("#themeBtn").onclick = () => { theme = themes[(themes.indexOf(theme) + 1) % 3]; store.set("zreb-theme", theme); applyTheme(); };
+applyTheme();
+
+/* ---------- Toast ---------- */
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
+
+/* ---------- Tabovi ---------- */
+$$(".seg [role=tab]").forEach(b => b.onclick = () => {
+  $$(".seg [role=tab]").forEach(x => x.setAttribute("aria-selected", x === b));
+  $$("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
+});
+
+/* ---------- Brojači ---------- */
+$$(".num").forEach(n => {
+  const inp = $("input", n);
+  $$("button", n).forEach(b => b.onclick = () => {
+    const v = (parseInt(inp.value, 10) || 0) + parseInt(b.dataset.step, 10);
+    inp.value = Math.min(+inp.max || 999, Math.max(+inp.min || 0, v));
+    inp.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+});
+
+/* ---------- Parsiranje nalepljenog teksta ---------- */
+const NOISE = /^(reply|replies|odgovori|odgovor|see translation|prikaži prevod|prikazi prevod|verified|potvrđeno|like|sviđa mi se|edited|izmenjeno|author|autor|pinned|zakačeno|view (all )?\d* ?(more )?repl(y|ies).*|hide replies|sakrij odgovore|pogledaj (sve )?odgovore.*|prikaži odgovore.*|—+|-+|·)$/i;
+const TIME = /^\d+\s?(s|sec|m|min|h|hr|d|w|wk|y|sek|č|h\.|dan[a]?|ned|nedelj[ae]|god|g)\.?$/i;
+const LIKES = /^[\d.,]+\s?(k\s)?(likes?|sviđanja|sviđanje|sviđa|lajk(ova|a)?)$/i;
+const ULINE = /^@?[a-z0-9._]{1,30}$/i;
+
+function parsePaste(raw) {
+  const lines = raw.replace(/\r/g, "").split("\n").map(l => l.trim()).filter(Boolean);
+  const out = [];
+  // Format "korisnik: tekst"
+  const inline = /^@?([a-z0-9._]{1,30})\s*:\s+(.+)$/i;
+  const inlineCount = lines.filter(l => inline.test(l)).length;
+  if (inlineCount >= Math.max(1, lines.length * 0.6)) {
+    for (const l of lines) { const m = l.match(inline); if (m) out.push(mk(m[1], m[2])); else if (out.length) out[out.length - 1].text += " " + l; }
+    return out;
+  }
+  // Blok format sa instagram.com
+  let cur = null;
+  const isNoise = l => NOISE.test(l) || TIME.test(l) || LIKES.test(l);
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (isNoise(l)) continue;
+    // korisničko ime: sam token, a sledeća ne-šum linija je tekst (nije novo ime)
+    if (ULINE.test(l) && !/^\d+$/.test(l)) {
+      let j = i + 1; while (j < lines.length && isNoise(lines[j])) j++;
+      const next = lines[j];
+      const nextIsText = next !== undefined && !(ULINE.test(next) && !next.startsWith("@"));
+      if (nextIsText && (!cur || cur.text)) { cur = mk(l, ""); out.push(cur); continue; }
+    }
+    // prvi red u obliku "korisnik tekst" (kopija sa telefona)
+    const sp = l.match(/^([a-z0-9._]{1,30})\s+(.+)$/i);
+    if (!cur && sp && !l.startsWith("@")) { cur = mk(sp[1], sp[2]); out.push(cur); continue; }
+    if (cur) cur.text = (cur.text ? cur.text + " " : "") + l;
+  }
+  return out.filter(c => c.text);
+}
+let uid = 0;
+function mk(username, text, timestamp = null, isReply = false) {
+  const t = timestamp ? Date.parse(timestamp) : NaN;
+  return { id: "c" + (++uid), username: normU(username), text: String(text || "").trim(), ts: isNaN(t) ? null : t, isReply: !!isReply };
+}
+
+/* ---------- CSV / JSON ---------- */
+function parseCSV(txt) {
+  const rows = []; let row = [], f = "", q = false;
+  const d = (txt.split("\n")[0].match(/;/g) || []).length > (txt.split("\n")[0].match(/,/g) || []).length ? ";" : ",";
+  for (let i = 0; i < txt.length; i++) {
+    const c = txt[i];
+    if (q) { if (c === '"') { if (txt[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === d) { row.push(f); f = ""; }
+    else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; }
+    else if (c !== "\r") f += c;
+  }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim()));
+}
+const KEYS = { u: ["username", "user", "korisnik", "user_name", "author", "owner", "name", "profile"], t: ["text", "comment", "komentar", "message", "content", "body"], ts: ["timestamp", "date", "datum", "time", "created_at", "created", "vreme"] };
+function pick(obj, keys) { for (const k of Object.keys(obj)) if (keys.includes(k.toLowerCase().trim())) return obj[k]; }
+function fromObjects(arr) {
+  const out = [];
+  for (const o of arr) {
+    if (!o || typeof o !== "object") continue;
+    let u = pick(o, KEYS.u); if (u && typeof u === "object") u = u.username || u.name;
+    if (!u && o.from) u = o.from.username;
+    const t = pick(o, KEYS.t);
+    if (u && t != null) out.push(mk(u, t, pick(o, KEYS.ts), !!o.parent_id || !!o.isReply));
+    const reps = o.replies && (o.replies.data || o.replies);
+    if (Array.isArray(reps)) reps.forEach(r => { const ru = r.username || (r.from && r.from.username); if (ru) out.push(mk(ru, r.text, r.timestamp, true)); });
+  }
+  return out;
+}
+function parseFile(name, txt) {
+  const n = name.toLowerCase();
+  if (n.endsWith(".json") || /^\s*[\[{]/.test(txt)) {
+    let j = JSON.parse(txt);
+    if (j && !Array.isArray(j)) j = j.data || j.comments || j.items || Object.values(j).find(Array.isArray) || [];
+    return fromObjects(j);
+  }
+  if (n.endsWith(".csv") || txt.split("\n")[0].includes(",") || txt.split("\n")[0].includes(";")) {
+    const rows = parseCSV(txt); if (rows.length < 2) return [];
+    const head = rows[0].map(h => h.toLowerCase().trim());
+    const ix = keys => head.findIndex(h => keys.includes(h));
+    let iu = ix(KEYS.u), it = ix(KEYS.t), its = ix(KEYS.ts);
+    if (iu < 0 || it < 0) { iu = 0; it = 1; return rows.map(r => mk(r[iu], r[it])).filter(c => c.username && c.text); }
+    return rows.slice(1).map(r => mk(r[iu], r[it], its >= 0 ? r[its] : null)).filter(c => c.username && c.text);
+  }
+  return parsePaste(txt);
+}
+
+/* ---------- Pratioci ---------- */
+function parseFollowers(txt) {
+  const set = new Set();
+  try {
+    let j = JSON.parse(txt);
+    if (!Array.isArray(j)) j = j.relationships_followers || j.followers || Object.values(j).find(Array.isArray) || [];
+    for (const it of j) {
+      if (typeof it === "string") { set.add(normU(it)); continue; }
+      (it.string_list_data || []).forEach(s => s.value && set.add(normU(s.value)));
+      if (it.title) set.add(normU(it.title));
+      if (it.username) set.add(normU(it.username));
+    }
+  } catch {
+    const html = txt.match(/instagram\.com\/([a-z0-9._]{1,30})/gi);
+    if (html) html.forEach(h => set.add(normU(h.split("/").pop())));
+    else txt.split(/[\s,;]+/).map(normU).filter(u => /^[a-z0-9._]{1,30}$/.test(u)).forEach(u => set.add(u));
+  }
+  set.delete(""); return set;
+}
+
+/* ---------- Pravila ---------- */
+function settings() {
+  const v = id => $("#" + id).value;
+  const kw = v("keyword").trim().toLowerCase();
+  const dl = v("deadline") ? new Date(v("deadline")).getTime() : null;
+  return {
+    nWin: Math.max(1, parseInt(v("nWin"), 10) || 1),
+    nAlt: Math.max(0, parseInt(v("nAlt"), 10) || 0),
+    minTags: Math.max(0, parseInt(v("minTags"), 10) || 0),
+    maxPer: Math.max(0, parseInt(v("maxPer"), 10) || 0),
+    owner: normU(v("owner")),
+    distinct: $("#distinctTags").checked, noSelf: $("#noSelfTag").checked,
+    mode: $("input[name=mode]:checked").value,
+    repeat: $("#repeat").checked,
+    follow: $("input[name=follow]:checked").value,
+    keyword: kw, deadline: isNaN(dl) ? null : dl,
+    replies: $("#replies").checked,
+    blacklist: new Set(v("blacklist").split(/[\s,;]+/).map(normU).filter(Boolean)),
+    seed: v("seedIn").trim()
+  };
+}
+
+function evaluate() {
+  const s = settings();
+  const perUserCount = new Map(), perUserTags = new Map();
+  const sorted = state.comments.slice().sort((a, b) => (a.ts ?? 0) - (b.ts ?? 0) || 0);
+  const ordered = sorted.every(c => c.ts == null) ? state.comments : sorted;
+  state.rows = ordered.map(c => {
+    const u = c.username;
+    let tags = [...new Set([...c.text.matchAll(MENTION)].map(m => m[1].toLowerCase().replace(/\.+$/, "")))];
+    if (s.noSelf) tags = tags.filter(t => t !== u && t !== s.owner);
+    let reason = null;
+    if (!s.replies && c.isReply) reason = "Odgovor na komentar";
+    else if (s.owner && u === s.owner) reason = "Tvoj nalog";
+    else if (s.blacklist.has(u)) reason = "Isključen nalog";
+    else if (s.deadline && c.ts && c.ts > s.deadline) reason = "Posle roka";
+    else if (s.keyword && !c.text.toLowerCase().includes(s.keyword)) reason = "Nema obavezne reči";
+    else {
+      const used = perUserTags.get(u) || new Set();
+      const fresh = s.distinct ? tags.filter(t => !used.has(t)) : tags;
+      if (fresh.length < s.minTags) reason = s.distinct && tags.length >= s.minTags ? "Ponovljeni tagovi" : "Premalo tagova";
+      else if (s.follow === "list" && state.followers && !state.followers.has(u)) reason = "Ne prati stranicu";
+      else {
+        const cnt = perUserCount.get(u) || 0;
+        if (s.mode === "user" && cnt >= 1) reason = "Već učestvuje";
+        else if (s.mode === "each" && s.maxPer && cnt >= s.maxPer) reason = "Limit šansi";
+        else { perUserCount.set(u, cnt + 1); fresh.forEach(t => used.add(t)); perUserTags.set(u, used); }
+      }
+    }
+    return { c, tags, reason };
+  });
+  state.entries = state.rows.filter(r => !r.reason).map(r => r.c);
+  renderList();
+}
+
+/* ---------- Prikaz liste ---------- */
+function hl(text) { return esc(text).replace(/@([a-z0-9._]{1,30})/gi, '<span class="m">@$1</span>'); }
+function fmtTs(ts) { return ts ? new Date(ts).toLocaleString("sr-Latn-RS", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : ""; }
+function renderList() {
+  const rows = state.rows, users = new Set(state.entries.map(c => c.username));
+  const out = rows.filter(r => r.reason);
+  $("#sTotal").textContent = rows.length;
+  $("#sValid").textContent = state.entries.length;
+  $("#sUsers").textContent = users.size;
+  $("#sOut").textContent = out.length;
+  const counts = {}; out.forEach(r => counts[r.reason] = (counts[r.reason] || 0) + 1);
+  $("#reasons").innerHTML = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<span class="chip">${esc(k)} <b>${v}</b></span>`).join("");
+  const q = state.q.toLowerCase();
+  const vis = rows.filter(r => (state.filter === "all" || (state.filter === "ok" ? !r.reason : !!r.reason)) && (!q || r.c.username.includes(q) || r.c.text.toLowerCase().includes(q)));
+  const list = $("#list");
+  if (!rows.length) list.innerHTML = '<div class="empty">Još nema komentara. Nalepi ih, učitaj fajl ili poveži Instagram nalog.</div>';
+  else if (!vis.length) list.innerHTML = '<div class="empty">Nema rezultata za ovaj filter.</div>';
+  else {
+    list.innerHTML = vis.slice(0, state.shown).map(r => `<div class="item">
+      <div class="u">@${esc(r.c.username)}<span class="ts">${fmtTs(r.c.ts)}${r.c.isReply ? " · odgovor" : ""}</span></div>
+      <span class="pill ${r.reason ? (r.reason === "Već učestvuje" || r.reason === "Limit šansi" ? "warn" : "bad") : "ok"}">${r.reason ? esc(r.reason) : "Važi · " + r.tags.length + " tag."}</span>
+      <div class="t">${hl(r.c.text)}</div></div>`).join("") +
+      (vis.length > state.shown ? `<button class="more" type="button" id="moreBtn">Prikaži još ${vis.length - state.shown}</button>` : "");
+    const mb = $("#moreBtn"); if (mb) mb.onclick = () => { state.shown += 200; renderList(); };
+  }
+  const n = state.entries.length, s = settings();
+  const ok = n > 0;
+  $("#drawBtn").disabled = !ok; $("#drawBtnM").disabled = !ok;
+  $("#mbText").textContent = n + " šansi · " + users.size + " uč.";
+  $("#ctaText").textContent = !rows.length ? "Učitaj komentare da bi izvukao pobednike." :
+    !ok ? "Nijedan komentar ne ispunjava pravila." :
+    `${n} važećih šansi od ${users.size} učesnika. Izvlači se ${s.nWin} ${s.nWin === 1 ? "pobednik" : "pobednika"}${s.nAlt ? " i " + s.nAlt + " rez." : ""}.`;
+  $("#sampleBanner").hidden = !state.isSample;
+}
+
+function setComments(list, source, isSample = false) {
+  state.comments = list; state.source = source; state.isSample = isSample; state.shown = 120;
+  const st = $("#srcStatus");
+  st.className = "status " + (list.length ? "ok" : "bad");
+  st.innerHTML = list.length ? `<span class="ms">check_circle</span>${list.length} · ${esc(source)}` : "Nije pronađen nijedan komentar";
+  $("#results").hidden = true; state.draw = null;
+  evaluate();
+}
+
+/* ---------- Nasumičnost (seed) ---------- */
+function newSeed() { const a = new Uint32Array(2); crypto.getRandomValues(a); return [...a].map(x => x.toString(16).toUpperCase().padStart(8, "0")).join("").replace(/(.{4})(?=.)/g, "$1-"); }
+function cyrb128(str) { let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
+  for (let i = 0, k; i < str.length; i++) { k = str.charCodeAt(i); h1 = h2 ^ Math.imul(h1 ^ k, 597399067); h2 = h3 ^ Math.imul(h2 ^ k, 2869860233); h3 = h4 ^ Math.imul(h3 ^ k, 951274213); h4 = h1 ^ Math.imul(h4 ^ k, 2716044179); }
+  h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067); h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233); h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213); h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+  return [(h1 ^ h2 ^ h3 ^ h4) >>> 0, (h2 ^ h1) >>> 0, (h3 ^ h1) >>> 0, (h4 ^ h1) >>> 0]; }
+function sfc32(a, b, c, d) { return () => { a |= 0; b |= 0; c |= 0; d |= 0; const t = (a + b | 0) + d | 0; d = d + 1 | 0; a = b ^ b >>> 9; b = c + (c << 3) | 0; c = (c << 21 | c >>> 11); c = c + t | 0; return (t >>> 0) / 4294967296; }; }
+
+/* ---------- Izvlačenje ---------- */
+function makeDraw(entries, s) {
+  const seed = s.seed || newSeed();
+  return { seed, rng: sfc32(...cyrb128(seed.toUpperCase())), pool: entries.slice(), used: new Set(), repeat: s.repeat, winners: [], alts: [], manual: s.follow === "manual", at: new Date(), total: entries.length, users: new Set(entries.map(e => e.username)).size };
+}
+function drawOne(d) {
+  while (d.pool.length) {
+    const i = Math.floor(d.rng() * d.pool.length);
+    const e = d.pool.splice(i, 1)[0];
+    if (!d.repeat && d.used.has(e.username)) continue;
+    d.used.add(e.username);
+    return { e, status: "pending" };
+  }
+  return null;
+}
+function runDraw() {
+  if (!state.entries.length) return;
+  const s = settings();
+  const d = makeDraw(state.entries, s);
+  for (let i = 0; i < s.nWin; i++) { const w = drawOne(d); if (w) d.winners.push(w); }
+  for (let i = 0; i < s.nAlt; i++) { const w = drawOne(d); if (w) d.alts.push(w); }
+  state.draw = d;
+  const res = $("#results"); res.hidden = false;
+  $("#seedOut").textContent = d.seed;
+  $("#winners").innerHTML = ""; $("#alts").innerHTML = ""; $("#altTitle").hidden = true; $("#resMeta").textContent = "";
+  res.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  spin(() => renderResults(true));
+}
+function spin(done) {
+  const reel = $("#reel"), name = $("#reelName");
+  const names = [...new Set(state.entries.map(e => e.username))];
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || names.length < 2) { reel.hidden = true; done(); return; }
+  reel.hidden = false; let t = 0, delay = 40;
+  const tick = () => {
+    name.textContent = "@" + names[Math.floor(Math.random() * names.length)];
+    t += delay; delay *= 1.07;
+    if (t < 2200) setTimeout(tick, delay); else { reel.hidden = true; done(); }
+  };
+  tick();
+}
+function ticket(w, i, alt) {
+  const d = state.draw, e = w.e;
+  const badge = d.manual ? (w.status === "ok" ? '<span class="badge ok">Potvrđen</span>' : '<span class="badge wait">Čeka proveru</span>') : "";
+  const acts = d.manual && !alt && w.status !== "ok" ? `<div class="acts">
+      <a class="btn sm" href="https://www.instagram.com/${encodeURIComponent(e.username)}/" target="_blank" rel="noopener"><span class="ms">person</span>Profil</a>
+      <button class="btn sm" type="button" data-ok="${i}"><span class="ms">verified</span>Prati, potvrdi</button>
+      <button class="btn sm" type="button" data-no="${i}"><span class="ms">block</span>Ne prati, zameni</button></div>` : "";
+  return `<div class="ticket reveal ${alt ? "alt" : ""} ${w.status === "ok" ? "confirmed" : ""}" style="animation-delay:${i * 120}ms">
+    <div class="rank">${alt ? "R" + (i + 1) : i + 1}</div>
+    <div class="body"><div class="who"><a href="https://www.instagram.com/${encodeURIComponent(e.username)}/" target="_blank" rel="noopener">@${esc(e.username)}</a>${alt ? "" : badge}</div>
+    <div class="txt">${hl(e.text)}</div>${acts}</div></div>`;
+}
+function renderResults() {
+  const d = state.draw;
+  $("#winners").innerHTML = d.winners.length ? d.winners.map((w, i) => ticket(w, i, false)).join("") : '<div class="empty">Nema dovoljno učesnika.</div>';
+  $("#alts").innerHTML = d.alts.map((w, i) => ticket(w, i, true)).join("");
+  $("#altTitle").hidden = !d.alts.length;
+  const s = settings();
+  const short = d.winners.length < s.nWin ? ` Izvučeno je ${d.winners.length} od ${s.nWin} jer nema više učesnika.` : "";
+  $("#resMeta").textContent = `Izvučeno ${d.at.toLocaleString("sr-Latn-RS")} iz ${d.total} šansi (${d.users} učesnika). Kod žreba ${d.seed}.${short}`;
+  $$("[data-ok]").forEach(b => b.onclick = () => { d.winners[+b.dataset.ok].status = "ok"; renderResults(); });
+  $$("[data-no]").forEach(b => b.onclick = () => {
+    const i = +b.dataset.no;
+    const rep = d.alts.shift() || drawOne(d);
+    if (rep) { d.winners[i] = rep; toast("Zamenjen sledećom rezervom: @" + rep.e.username); }
+    else { d.winners.splice(i, 1); toast("Nema više rezervi ni učesnika."); }
+    renderResults();
+  });
+}
+
+/* ---------- Izvoz ---------- */
+function resultText() {
+  const d = state.draw; if (!d) return "";
+  const L = ["Pobednici nagradne igre:"];
+  d.winners.forEach((w, i) => L.push(`${i + 1}. @${w.e.username}`));
+  if (d.alts.length) { L.push("", "Rezerve:"); d.alts.forEach((w, i) => L.push(`R${i + 1}. @${w.e.username}`)); }
+  L.push("", `Izvučeno ${d.at.toLocaleString("sr-Latn-RS")} iz ${d.total} šansi (${d.users} učesnika). Kod žreba: ${d.seed}`);
+  return L.join("\n");
+}
+$("#copyBtn").onclick = async () => {
+  const txt = resultText();
+  try { await navigator.clipboard.writeText(txt); toast("Rezultati su kopirani"); }
+  catch { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast("Rezultati su kopirani"); } catch { toast("Kopiranje nije uspelo"); } ta.remove(); }
+};
+$("#imgBtn").onclick = () => {
+  const d = state.draw; if (!d) return;
+  const cv = document.createElement("canvas"); cv.width = 1080; cv.height = 1920; const g = cv.getContext("2d");
+  const bg = "#16171C", acc = "#F2668F", fg = "#ECEDF2", mu = "#9A9DAA";
+  g.fillStyle = bg; g.fillRect(0, 0, 1080, 1920);
+  g.fillStyle = acc; g.fillRect(90, 260, 120, 8);
+  g.fillStyle = fg; g.font = "700 96px Geist, system-ui, sans-serif"; g.fillText(d.winners.length > 1 ? "Pobednici" : "Pobednik", 90, 400);
+  g.fillStyle = mu; g.font = "400 40px Geist, system-ui, sans-serif"; g.fillText("Hvala svima na učešću!", 90, 470);
+  let y = 620; const lines = d.winners.slice(0, 10);
+  const size = lines.length > 6 ? 58 : 76;
+  lines.forEach((w, i) => {
+    g.fillStyle = acc; g.font = `500 ${size * .7}px "Geist Mono", monospace`; g.fillText(String(i + 1).padStart(2, "0"), 90, y);
+    g.fillStyle = fg; g.font = `600 ${size}px Geist, system-ui, sans-serif`;
+    let n = "@" + w.e.username; while (g.measureText(n).width > 760 && n.length > 4) n = n.slice(0, -2) + "…";
+    g.fillText(n, 200, y); y += size * 1.75;
+  });
+  g.fillStyle = mu; g.font = "400 32px Geist, system-ui, sans-serif";
+  g.fillText(`${d.total} šansi · ${d.users} učesnika`, 90, 1700);
+  g.font = '400 30px "Geist Mono", monospace'; g.fillText("Kod žreba " + d.seed, 90, 1760);
+  cv.toBlob(b => {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "pobednici.png";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast("Slika je preuzeta");
+  }, "image/png");
+};
+$("#againBtn").onclick = () => { $("#seedIn").value = ""; runDraw(); };
+$("#drawBtn").onclick = runDraw; $("#drawBtnM").onclick = runDraw;
+
+/* ---------- Unos ---------- */
+$("#parseBtn").onclick = () => { const l = parsePaste($("#pasteBox").value); setComments(l, "nalepljeno"); if (!l.length) toast("Nisam prepoznao komentare. Proveri format."); };
+$("#sampleBtn").onclick = loadSample;
+$("#clearSample").onclick = () => { $("#pasteBox").value = ""; $("#owner").value = ""; setComments([], ""); $("#srcStatus").textContent = ""; };
+async function readFile(f) { return await f.text(); }
+$("#fileIn").onchange = async e => { const f = e.target.files[0]; if (!f) return; try { setComments(parseFile(f.name, await readFile(f)), f.name); } catch (err) { toast("Fajl nije moguće pročitati: " + err.message); } };
+const drop = $("#drop");
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", async e => { const f = e.dataTransfer.files[0]; if (f) try { setComments(parseFile(f.name, await readFile(f)), f.name); } catch (err) { toast("Fajl nije moguće pročitati: " + err.message); } });
+$("#followIn").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  state.followers = parseFollowers(await readFile(f));
+  const st = $("#followStatus"); st.className = "status " + (state.followers.size ? "ok" : "bad");
+  st.textContent = state.followers.size ? state.followers.size + " pratilaca" : "Nijedan pratilac nije pronađen";
+  evaluate();
+};
+
+/* ---------- Instagram Graph API ---------- */
+async function gfetch(url) { const r = await fetch(url); const j = await r.json(); if (j.error) throw new Error(j.error.message); return j; }
+function gurl(path, params) { const u = new URL(GRAPH + path); Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v)); u.searchParams.set("access_token", $("#tokenIn").value.trim()); return u.toString(); }
+$("#loadPostsBtn").onclick = async () => {
+  if (!$("#tokenIn").value.trim()) return toast("Unesi access token");
+  const box = $("#posts"); box.innerHTML = '<div class="empty" style="grid-column:1/-1">Učitavam objave…</div>';
+  try {
+    const acc = await gfetch(gurl("/me/accounts", { fields: "name,instagram_business_account{id,username}", limit: 50 }));
+    const igs = (acc.data || []).map(p => p.instagram_business_account).filter(Boolean);
+    if (!igs.length) throw new Error("Nijedna Facebook stranica nema povezan Instagram poslovni nalog.");
+    if (!$("#owner").value) $("#owner").value = "@" + igs[0].username;
+    const media = [];
+    for (const ig of igs) { const m = await gfetch(gurl(`/${ig.id}/media`, { fields: "id,caption,permalink,timestamp,media_type,thumbnail_url,media_url,comments_count", limit: 24 })); media.push(...(m.data || [])); }
+    box.innerHTML = media.map(m => `<button class="post" type="button" data-id="${esc(m.id)}" aria-pressed="false">
+      <img src="${esc(m.thumbnail_url || m.media_url || "")}" alt="" loading="lazy"><div><b>${m.comments_count ?? 0}</b> kom. · ${new Date(m.timestamp).toLocaleDateString("sr-Latn-RS")}</div></button>`).join("") || '<div class="empty">Nema objava.</div>';
+    $$(".post", box).forEach(b => b.onclick = () => { $$(".post", box).forEach(x => x.setAttribute("aria-pressed", x === b)); $("#mediaIn").value = b.dataset.id; loadComments(); });
+    evaluate();
+  } catch (err) { box.innerHTML = `<div class="empty" style="grid-column:1/-1">Greška: ${esc(err.message)}</div>`; }
+};
+async function loadComments() {
+  const id = $("#mediaIn").value.trim();
+  if (!$("#tokenIn").value.trim() || !id) return toast("Unesi token i ID objave");
+  const st = $("#srcStatus"); st.className = "status"; st.textContent = "Preuzimam komentare…";
+  try {
+    let next = gurl(`/${id}/comments`, { fields: "id,text,timestamp,username,replies.limit(50){id,text,timestamp,username}", limit: 50 });
+    const raw = [];
+    while (next) { const j = await gfetch(next); raw.push(...(j.data || [])); next = j.paging && j.paging.next; st.textContent = `Preuzimam… ${raw.length}`; }
+    setComments(fromObjects(raw), "Instagram API");
+  } catch (err) { st.className = "status bad"; st.textContent = "Greška: " + err.message; }
+}
+$("#loadCommentsBtn").onclick = loadComments;
+
+/* ---------- Reaktivnost pravila ---------- */
+$("#rules").addEventListener("input", () => { syncSubs(); evaluate(); });
+$("#rules").addEventListener("change", () => { syncSubs(); evaluate(); });
+$("#q").addEventListener("input", e => { state.q = e.target.value; state.shown = 120; renderList(); });
+$$(".filters button").forEach(b => b.onclick = () => { state.filter = b.dataset.f; $$(".filters button").forEach(x => x.setAttribute("aria-pressed", x === b)); state.shown = 120; renderList(); });
+function syncSubs() {
+  $("#maxWrap").hidden = $("input[name=mode]:checked").value !== "each";
+  $("#followWrap").hidden = $("input[name=follow]:checked").value !== "list";
+}
+
+/* ---------- Primer ---------- */
+function loadSample() {
+  const S = `pekara.zrno: Nagradna igra! Tagujte 2 prijatelja i pratite nas
+ana.markovic: Učestvujem! @mila.jovanovic @nikola_p
+mila.jovanovic: Jaoo kako izgleda 😍 @ana.markovic @teodora.r
+stefan_ilic: @marko.dj @lazar.vuk
+teodora.r: Obožavam vaš kroasan @jelena.s
+jelena.s: @teodora.r @iva_kostic @sara.m
+marko.dj: Probam i ja @stefan_ilic @dusan.k
+lazar.vuk: Super! @marko.dj @stefan_ilic
+iva_kostic: @jelena.s @sara.m #nagradnaigra
+sara.m: @iva_kostic @nina.pavl
+nina.pavl: Mmm 🥐
+dusan.k: @marko.dj @mila.jovanovic
+ana.markovic: Još jednom za sreću @luka.b @tamara.n
+milos.petr: @nina.pavl @sara.m @iva_kostic
+tamara.n: @luka.b @ana.markovic
+luka.b: @tamara.n @milos.petr
+katarina_v: @pekara.zrno @katarina_v
+vuk.radovic: @ognjen.s @petra.l
+petra.l: Divno! @vuk.radovic @ognjen.s
+ognjen.s: @petra.l @vuk.radovic
+ana.markovic: @mila.jovanovic @nikola_p
+bojana_c: @maja.t @goran.m
+maja.t: @bojana_c @goran.m
+goran.m: @maja.t @bojana_c
+emilija.d: Volim vašu pekaru!
+filip.z: @emilija.d @aleksa.j
+aleksa.j: @filip.z @emilija.d
+helena.s: @filip.z
+ivan.miletic: @helena.s @aleksa.j
+natasa.lj: @ivan.miletic @helena.s
+djordje_p: @natasa.lj @ivan.miletic
+sofija.k: @djordje_p @natasa.lj
+nemanja.r: @sofija.k @djordje_p
+andjela.b: @nemanja.r @sofija.k`;
+  $("#pasteBox").value = S; $("#owner").value = "@pekara.zrno";
+  setComments(parsePaste(S), "primer", true);
+}
+
+syncSubs();
+loadSample();
+})();
+</script>
+</body>
+</html>
