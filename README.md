@@ -1,90 +1,91 @@
 # Žreb: Instagram winner picker
 
-Nalepiš link Instagram objave, Žreb preuzme sve komentare, primeni pravila i izvuče pobednike. Isti princip kao Wask i GiveawayPick.
+Nalepiš link Instagram objave, Žreb sam preuzme sve komentare, primeni pravila, izvuče pobednike i proveri da li prate stranicu.
 
-```
-index.html  (GitHub Pages)  ──►  worker/  (Cloudflare Worker, čuva token)  ──►  Apify Instagram Comments Scraper
-```
+Potpuno nezavisna aplikacija: **sopstveni scraper**, bez Apify-ja, bez Instagram API ključeva i bez npm paketa. Jedino što treba je [Node.js](https://nodejs.org) (LTS).
 
-Instagram ne dozvoljava pregledaču da direktno čita komentare, pa ih preuzima Apify scraper. Worker stoji između sajta i Apify-ja da Apify token ne bi bio vidljiv posetiocima.
+## Pokretanje
 
-## Pokretanje (jednom, oko 10 minuta)
+1. Instaliraj Node.js LTS sa [nodejs.org](https://nodejs.org) (jednom).
+2. Preuzmi repo: zeleno dugme **Code → Download ZIP**, pa raspakuj.
+3. Dupli klik na:
+   - **Windows:** `start-windows.bat`
+   - **Mac:** `start-mac.command` (prvi put: desni klik → Open)
+   - **Linux:** `./start-linux.sh`
+4. Otvoriće se `http://localhost:4747`. Prijavi se na Instagram nalog, nalepi link objave, gotovo.
 
-### 1. Apify nalog
-1. Napravi besplatan nalog na [apify.com](https://apify.com). Dobija se $5 kredita mesečno, što je oko 1.900 komentara.
-2. Console → Settings → API & Integrations → kopiraj **Personal API token**.
+Ili iz terminala: `node server.js`.
 
-### 2. Cloudflare Worker
-Potreban je besplatan nalog na [cloudflare.com](https://dash.cloudflare.com) i Node.js.
+## Kako preuzima komentare
 
-```bash
-cd worker
-npx wrangler login
-npx wrangler secret put APIFY_TOKEN     # nalepi Apify token
-npx wrangler deploy
-```
+Žreb radi isto što i instagram.com u pregledaču kad otvoriš objavu i skroluješ komentare. Koristi iste interne pozive kao open-source alati [Instaloader](https://instaloader.github.io) i instagrapi:
 
-Wrangler ispiše adresu, npr. `https://zreb-api.tvoje-ime.workers.dev`.
+| Korak | Endpoint |
+|---|---|
+| Prijava (lozinka, 2FA) | `/api/v1/web/accounts/login/ajax/`, `.../two_factor/` |
+| Kod iz linka u ID objave | dekodiranje baze 64, rezervno iz HTML-a objave |
+| Podaci o objavi | `/api/v1/media/{id}/info/` |
+| Komentari | `/api/v1/media/{id}/comments/` sa `min_id` / `max_id` kursorom |
+| Odgovori | `/api/v1/media/{id}/comments/{pk}/child_comments/` |
+| Provera praćenja | `/api/v1/friendships/{id}/followers/?query=` |
 
-U `worker/wrangler.toml` po potrebi promeni:
-- `ALLOWED_ORIGINS`: sajt koji sme da koristi Worker (podrazumevano `https://gru-webdesign.github.io`)
-- `MAX_COMMENTS`: najviše komentara po objavi, štiti kredit (podrazumevano 2000)
-- `MAX_POSTS`: najviše objava u jednom žrebu (podrazumevano 10)
+Ponaša se kao čovek: 1 do 2 sekunde između strana, duža pauza na svakih 20 strana, a kad Instagram traži da se uspori (HTTP 429), čeka i nastavlja sam. Oko 15 komentara po strani znači **1.000 komentara za oko 2 minuta**.
 
-### 3. Poveži sajt sa Workerom
-U `index.html` upiši adresu Workera:
+Pauze se podešavaju promenljivom `ZREB_PACE` (npr. `ZREB_PACE=2 node server.js` za opreznije preuzimanje velikih objava).
 
-```js
-const DEFAULT_API = "https://zreb-api.tvoje-ime.workers.dev";
-```
+## Prijava na Instagram
 
-Commit, push. Posetiocima više ne treba nikakvo podešavanje.
+Instagram ne prikazuje komentare bez prijave, pa Žreb koristi tvoj nalog:
 
-### 4. GitHub Pages
-Repo → Settings → Pages → Deploy from branch → `main` / root. Sajt: `https://gru-webdesign.github.io/Winner_picker/`.
+- **Korisničko ime i lozinka**, uz kod ako imaš dvofaktorsku zaštitu. Lozinka se ne čuva. Čuvaju se samo kolačići sesije, i to u `.zreb/session.json` na tvom računaru.
+- **Kolačić sessionid**, ako Instagram traži dodatnu potvrdu: na instagram.com u Chrome-u F12 → Application → Cookies → `sessionid`.
 
-**Bez Workera:** u aplikaciji klikni zupčanik i unesi svoj Apify token. Čuva se samo u tom pregledaču. Dobro za ličnu upotrebu, ne za javni sajt.
+Preporuka: koristi **sporedni nalog**. Instagram ne dozvoljava automatsko čitanje u uslovima korišćenja i može privremeno ograničiti nalog koji šalje mnogo zahteva. Za nagradne igre sa nekoliko hiljada komentara to se u praksi retko dešava.
 
-## Kako se koristi
+## Obeleživač (bez instalacije)
 
-1. **Objava**: nalepi link (`/p/`, `/reel/`, `/tv/`). Preuzimanje kreće samo. Može i više objava u jednom žrebu.
-2. **Pravila**: podesi uslove.
-3. **Učesnici**: vidi ko važi, a ko je isključen i zašto.
-4. **Pobednici**: pobednici i rezerve, kod žreba, tekst za kopiranje, slika za story i **link rezultata** koji može da se podeli pratiocima.
+Verzija na GitHub Pages (`https://gru-webdesign.github.io/Winner_picker/`) radi i bez Node.js:
+
+1. Prevuci dugme **Žreb** na traku sa obeleživačima.
+2. Otvori objavu na instagram.com (prijavljen).
+3. Klikni obeleživač. Komentari se preuzimaju u tom tabu i stižu u Žreb.
+
+Ako pregledač blokira prozor, obeleživač sačuva `zreb-komentari.json`, koji učitaš pod **Drugi načini unosa → Fajl**. Automatska provera praćenja radi samo u lokalnoj aplikaciji.
 
 ## Pravila
 
 | Pravilo | Opis |
 |---|---|
-| Broj pobednika i rezervi | Rezerve zamenjuju diskvalifikovane |
-| Minimum tagova | Koliko @tagova mora da ima komentar (0 do 20) |
-| Tagovi se ne ponavljaju | Ista tagovana osoba se korisniku računa samo jednom |
-| Ne računaj tag sebe i stranice | Tag sopstvenog naloga ili organizatora ne važi |
-| Svaki komentar / jedan po korisniku | Više šansi za više komentara ili samo jedna |
-| Limit šansi po korisniku | Npr. najviše 3 komentara po osobi |
-| Ponavljanje pobednika | Da li isti korisnik može da osvoji više mesta |
-| Praćenje stranice | Bez provere, ručna potvrda ili poređenje sa listom pratilaca |
-| Obavezna reč ili hashtag | Npr. `#nagradnaigra` |
-| Rok za komentare | Komentari posle roka ne važe |
-| Isključeni nalozi | Zaposleni, partneri |
-| Odgovori na komentare | Apify ih vraća samo na plaćenom planu |
-| Kod žreba | Isti kod i isti komentari daju isti rezultat |
+| Broj pobednika i rezervi | do 100 |
+| Minimum tagova | 0 do 20 @tagova u komentaru |
+| Tagovi se ne ponavljaju | ista tagovana osoba se računa samo jednom po korisniku |
+| Ne računaj tag sebe i organizatora | |
+| Svaki komentar / jedan po korisniku | uz limit šansi po korisniku |
+| Ponavljanje pobednika | isti korisnik na više mesta ili ne |
+| Praćenje stranice | automatska provera (zamenjuje one koji ne prate), ručna potvrda, ili lista pratilaca iz Instagram izvoza |
+| Više naloga za praćenje | npr. organizator i partner |
+| Obavezna reč ili hashtag, rok, isključeni nalozi, odgovori | pod „Dodatni uslovi“ |
+| Više objava u jednom žrebu | do 10 linkova |
+| Kod žreba | isti kod i isti komentari daju isti rezultat (proverljivo) |
 
-## Provera praćenja
+Rezultat: pobednici, rezerve, diskvalifikovani sa razlogom, tekst za kopiranje, slika za story (1080×1920) i **javni link rezultata** za pratioce.
 
-Ni Instagram ni scraperi ne mogu pouzdano da provere da li neko prati stranicu. Postoje dve opcije:
+## Testovi
 
-- **Ručna potvrda**: za svakog pobednika otvoriš profil, pa potvrdiš ili ga zameniš sledećom rezervom.
-- **Lista pratilaca**: Instagram → Centar naloga → Tvoje informacije i dozvole → Preuzmi informacije → Pratioci i praćenja, JSON. Učitaj `followers_1.json`.
+```bash
+npm test
+```
 
-## Troškovi
+Pokreće lažni Instagram server (`test/mock-instagram.js`) i prolazi ceo tok: prijava sa 2FA, 260 komentara kroz 18 strana, pauza posle 429, odgovori, provera praćenja, bezbednost. Ako Instagram promeni odgovore, ovde se vidi šta treba prilagoditi u `scraper/instagram.js`.
 
-| | Besplatno | Napomena |
-|---|---|---|
-| GitHub Pages | da | |
-| Cloudflare Worker | da, 100.000 zahteva dnevno | jedan žreb je 10 do 30 zahteva |
-| Apify | $5 mesečno, oko 1.900 komentara | zatim oko $2,3 do $2,6 na 1.000 komentara |
+## Struktura
 
-## Ostali unosi
+```
+index.html              aplikacija (radi i kao statična stranica na GitHub Pages)
+server.js               lokalni server na 127.0.0.1:4747
+scraper/instagram.js    scraper: prijava, komentari, odgovori, praćenje
+start-*.bat/.command/.sh  pokretači
+test/                   lažni Instagram i testovi
+```
 
-Pod „Drugi načini unosa“: nalepljen tekst sa instagram.com ili fajl (CSV `username,text,timestamp`, Apify JSON, Graph API JSON).
+Server sluša samo na `127.0.0.1` i odbija zahteve sa drugih adresa, pa niko na mreži ne može da koristi tvoju sesiju.

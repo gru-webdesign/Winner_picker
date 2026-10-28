@@ -1,0 +1,15 @@
+{
+  "name": "zreb",
+  "version": "2.0.0",
+  "description": "Žreb: izvlačenje pobednika iz komentara na Instagram objavi, sa sopstvenim scraperom.",
+  "type": "module",
+  "private": true,
+  "main": "server.js",
+  "bin": { "zreb": "server.js" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/run.js"
+  },
+  "engines": { "node": ">=18.17" },
+  "license": "MIT"
+}
