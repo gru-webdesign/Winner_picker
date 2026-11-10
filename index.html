@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="sr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=add,block,bookmark_add,casino,check_circle,close,content_copy,content_paste,download,emoji_events,group,how_to_reg,info,lock,login,logout,open_in_new,person,refresh,search,share,tune,upload_file,verified&display=block">
 <style>
-/* Layout: dve kolone na desktopu (objava + pravila levo, učesnici + pobednici desno), jedna kolona na telefonu sa donjom trakom za izvlačenje */
+/* Layout: two columns on desktop (comments + rules left, entries + winners right), one column on phones with a bottom draw bar */
 :root{
   --bg:#F3F4F7; --surface:#FFFFFF; --surface-2:#F8F9FB; --fg:#16171C; --muted:#5D6170; --line:#E1E3E9;
   --accent:#BE1F57; --accent-soft:#FBE7EE; --on-accent:#FFFFFF;
@@ -244,148 +244,148 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
   <header class="top">
     <div class="brand">
       <div class="mark"><span class="ms">emoji_events</span></div>
-      <div><h1>Raffly</h1><p>Izvlačenje pobednika iz komentara na Instagram objavi</p></div>
+      <div><h1>Raffly</h1><p>Pick giveaway winners from Instagram comments</p></div>
     </div>
-    <button class="theme-btn" id="themeBtn" type="button">Tema: sistem</button>
+    <button class="theme-btn" id="themeBtn" type="button">Theme: system</button>
   </header>
 
   <section class="panel public" id="publicView" hidden aria-labelledby="h-pub">
-    <div class="panel-h"><h2 id="h-pub"><span class="ms" style="color:var(--accent)">emoji_events</span> Rezultat žreba</h2><span class="seed" id="pubSeed"></span></div>
+    <div class="panel-h"><h2 id="h-pub"><span class="ms" style="color:var(--accent)">emoji_events</span> Giveaway results</h2><span class="seed" id="pubSeed"></span></div>
     <div class="panel-b">
       <p class="help" id="pubMeta" style="margin:0"></p>
       <div class="winners" id="pubWinners"></div>
-      <div class="sec-title" id="pubAltTitle" hidden>Rezerve</div>
+      <div class="sec-title" id="pubAltTitle" hidden>Backups</div>
       <div class="winners" id="pubAlts"></div>
-      <div class="sec-title" id="pubOutTitle" hidden>Diskvalifikovani</div>
+      <div class="sec-title" id="pubOutTitle" hidden>Disqualified</div>
       <div class="winners" id="pubOut"></div>
       <div id="pubPosts" class="help"></div>
-      <p class="help">Ovo je zapis izvlačenja koji je organizator podelio. Kod žreba i broj šansi služe kao dokaz izvlačenja.</p>
-      <div class="row"><a class="btn primary" href="./" id="pubNew"><span class="ms">casino</span>Napravi svoj žreb</a></div>
+      <p class="help">This is the draw record shared by the organizer. The draw code and the number of entries serve as proof of the draw.</p>
+      <div class="row"><a class="btn primary" href="./" id="pubNew"><span class="ms">casino</span>Run your own giveaway</a></div>
     </div>
   </section>
 
   <div class="grid" id="mainGrid">
     <div class="col">
-      <!-- 1. Komentari -->
+      <!-- 1. Comments -->
       <section class="panel" id="srcPanel" aria-labelledby="h-src">
-        <div class="panel-h"><h2 id="h-src"><span class="step">1</span> Komentari sa Instagrama</h2>
-          <button class="linkish" id="howToggle" type="button" hidden>Kako radi</button></div>
+        <div class="panel-h"><h2 id="h-src"><span class="step">1</span> Instagram comments</h2>
+          <button class="linkish" id="howToggle" type="button" hidden>How it works</button></div>
         <div class="panel-b">
           <ol class="how" id="how">
             <li data-setup>
-              <div class="txt"><b>Prevuci dugme Raffly na traku sa obeleživačima</b><span>Samo prvi put. Ne vidiš traku? <kbd class="mod">Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd></span></div>
-              <a class="btn bm-link" id="bmLink" href="#" draggable="true" title="Prevuci me na traku sa obeleživačima"><span class="ms">bookmark_add</span>Raffly</a>
+              <div class="txt"><b>Drag the Raffly button to your bookmarks bar</b><span>First time only. Bar not visible? <kbd class="mod">Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd></span></div>
+              <a class="btn bm-link" id="bmLink" href="#" draggable="true" title="Drag me to your bookmarks bar"><span class="ms">bookmark_add</span>Raffly</a>
             </li>
             <li>
-              <div class="txt"><b>Otvori objavu na Instagramu i klikni Raffly</b><span>Na računaru, u pregledaču u kom si prijavljen na Instagram.</span></div>
+              <div class="txt"><b>Open the post on Instagram and click Raffly</b><span>On a computer, in the browser where you are logged in to Instagram.</span></div>
               <div class="link-row">
-                <input type="url" id="link0" class="linkIn" inputmode="url" autocomplete="off" placeholder="Nalepi link objave da je otvoriš" aria-label="Link objave">
-                <button class="btn" id="openPostBtn" type="button"><span class="ms">open_in_new</span>Otvori</button>
+                <input type="url" id="link0" class="linkIn" inputmode="url" autocomplete="off" placeholder="Paste the post link to open it" aria-label="Post link">
+                <button class="btn" id="openPostBtn" type="button"><span class="ms">open_in_new</span>Open</button>
               </div>
             </li>
             <li>
-              <div class="txt"><b id="step3Title">Klikni „Otvori u Raffly“</b><span id="step3Text">Kad obeleživač završi, komentari stižu ovde.</span></div>
+              <div class="txt"><b id="step3Title">Click "Open in Raffly"</b><span id="step3Text">When the bookmarklet finishes, the comments arrive here.</span></div>
             </li>
           </ol>
 
           <div class="wait" id="waitBox">
             <span class="ms">content_paste</span>
-            <span id="waitText">Čekam komentare. Ako ih imaš kopirane, pritisni <kbd class="mod">Ctrl</kbd>+<kbd>V</kbd>.</span>
+            <span id="waitText">Waiting for comments. If you have them copied, press <kbd class="mod">Ctrl</kbd>+<kbd>V</kbd>.</span>
           </div>
 
           <div class="postcard" id="postCard" hidden>
             <div class="ph"><img id="postImg" alt="" hidden><span class="ms" id="postPh">emoji_events</span></div>
             <div class="meta"><b id="postOwner"></b><span class="cap" id="postCap"></span><span id="postCount" style="color:var(--muted)"></span></div>
           </div>
-          <label class="check" id="mergeWrap" hidden><input type="checkbox" id="mergeIn"><span>Sledeću objavu dodaj na ove komentare<small>Za jedan žreb na više objava.</small></span></label>
+          <label class="check" id="mergeWrap" hidden><input type="checkbox" id="mergeIn"><span>Add the next post to these comments<small>For one giveaway across several posts.</small></span></label>
           <span class="status" id="srcStatus"></span>
 
           <details class="adv">
-            <summary><span class="ms">content_paste</span>Drugi načini unosa</summary>
+            <summary><span class="ms">content_paste</span>Other ways to add comments</summary>
             <div class="seg" role="tablist" data-group="src">
-              <button role="tab" aria-selected="true" data-tab="paste" type="button"><span class="ms">content_paste</span>Nalepi tekst</button>
-              <button role="tab" aria-selected="false" data-tab="file" type="button"><span class="ms">upload_file</span>Fajl</button>
-              <button role="tab" aria-selected="false" data-tab="code" type="button"><span class="ms">bookmark_add</span>Obeleživač ručno</button>
+              <button role="tab" aria-selected="true" data-tab="paste" type="button"><span class="ms">content_paste</span>Paste text</button>
+              <button role="tab" aria-selected="false" data-tab="file" type="button"><span class="ms">upload_file</span>File</button>
+              <button role="tab" aria-selected="false" data-tab="code" type="button"><span class="ms">bookmark_add</span>Bookmarklet code</button>
             </div>
             <div data-pane="src:paste" style="margin-top:12px">
-              <label class="lbl" for="pasteBox">Komentari</label>
-              <textarea id="pasteBox" spellcheck="false" placeholder="ana.markovic: Učestvujem! @mila.j @nikola_p"></textarea>
-              <p class="help">Komentari kopirani sa instagram.com ili jedan po redu u obliku <code>korisnik: tekst</code>.</p>
+              <label class="lbl" for="pasteBox">Comments</label>
+              <textarea id="pasteBox" spellcheck="false" placeholder="emma.clark: I'm in! @mia.j @noah_p"></textarea>
+              <p class="help">Comments copied from instagram.com, or one per line as <code>username: text</code>.</p>
               <div class="row" style="margin-top:10px">
-                <button class="btn primary" id="parseBtn" type="button">Učitaj komentare</button>
-                <button class="btn ghost" id="sampleBtn" type="button">Primer</button>
+                <button class="btn primary" id="parseBtn" type="button">Load comments</button>
+                <button class="btn ghost" id="sampleBtn" type="button">Sample</button>
               </div>
             </div>
             <div data-pane="src:file" hidden style="margin-top:12px">
               <label class="drop" id="drop" for="fileIn">
                 <span class="ms" style="font-size:28px">upload_file</span><br>
-                <strong>Izaberi ili prevuci fajl</strong><br>
-                <span style="font-size:13px">CSV, JSON ili TXT</span>
+                <strong>Choose or drop a file</strong><br>
+                <span style="font-size:13px">CSV, JSON or TXT</span>
               </label>
               <input type="file" id="fileIn" accept=".csv,.json,.txt,text/csv,application/json,text/plain" hidden>
-              <p class="help">CSV kolone: username, text, timestamp. Radi i sa izvozom drugih alata.</p>
+              <p class="help">CSV columns: username, text, timestamp. Exports from other tools work too.</p>
             </div>
             <div data-pane="src:code" hidden style="margin-top:12px">
-              <p class="help" style="margin-top:0">Ako prevlačenje ne radi: napravi novi obeleživač (desni klik na traku → Dodaj stranicu), nazovi ga Raffly i u polje za adresu nalepi kod.</p>
-              <button class="btn" id="copyBmBtn" type="button"><span class="ms">content_copy</span>Kopiraj kod obeleživača</button>
+              <p class="help" style="margin-top:0">If dragging doesn't work: create a new bookmark (right-click the bar → Add page), name it Raffly and paste the code into the URL field.</p>
+              <button class="btn" id="copyBmBtn" type="button"><span class="ms">content_copy</span>Copy bookmarklet code</button>
             </div>
           </details>
         </div>
       </section>
 
-      <!-- 2. Pravila -->
+      <!-- 2. Rules -->
       <section class="panel" aria-labelledby="h-rules">
-        <div class="panel-h"><h2 id="h-rules"><span class="step">2</span> Pravila</h2></div>
+        <div class="panel-h"><h2 id="h-rules"><span class="step">2</span> Rules</h2></div>
         <form class="panel-b" id="rules" onsubmit="return false">
           <div class="fields">
-            <div><label class="lbl" for="nWin">Broj pobednika</label>
-              <div class="num"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="nWin" type="number" min="1" max="100" value="1"><button type="button" data-step="1" aria-label="Više">+</button></div></div>
-            <div><label class="lbl" for="nAlt">Rezerve</label>
-              <div class="num"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="nAlt" type="number" min="0" max="100" value="2"><button type="button" data-step="1" aria-label="Više">+</button></div></div>
-            <div><label class="lbl" for="minTags">Minimum tagova u komentaru</label>
-              <div class="num"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="minTags" type="number" min="0" max="20" value="2"><button type="button" data-step="1" aria-label="Više">+</button></div></div>
-            <div><label class="lbl" for="owner">Nalog organizatora</label>
-              <input type="text" id="owner" placeholder="@tvoja.stranica" autocomplete="off"></div>
-            <label class="check full"><input type="checkbox" id="distinctTags" checked><span>Tagovi se ne ponavljaju<small>Ista tagovana osoba se računa samo u prvom komentaru istog korisnika.</small></span></label>
-            <label class="check full"><input type="checkbox" id="noSelfTag" checked><span>Ne računaj tag sebe i naloga organizatora</span></label>
+            <div><label class="lbl" for="nWin">Number of winners</label>
+              <div class="num"><button type="button" data-step="-1" aria-label="Less">−</button><input id="nWin" type="number" min="1" max="100" value="1"><button type="button" data-step="1" aria-label="More">+</button></div></div>
+            <div><label class="lbl" for="nAlt">Backups</label>
+              <div class="num"><button type="button" data-step="-1" aria-label="Less">−</button><input id="nAlt" type="number" min="0" max="100" value="2"><button type="button" data-step="1" aria-label="More">+</button></div></div>
+            <div><label class="lbl" for="minTags">Minimum tags per comment</label>
+              <div class="num"><button type="button" data-step="-1" aria-label="Less">−</button><input id="minTags" type="number" min="0" max="20" value="2"><button type="button" data-step="1" aria-label="More">+</button></div></div>
+            <div><label class="lbl" for="owner">Organizer account</label>
+              <input type="text" id="owner" placeholder="@your.page" autocomplete="off"></div>
+            <label class="check full"><input type="checkbox" id="distinctTags" checked><span>No repeated tags<small>A tagged person counts only in the first comment by the same user.</small></span></label>
+            <label class="check full"><input type="checkbox" id="noSelfTag" checked><span>Ignore tags of themselves and the organizer</span></label>
           </div>
 
           <div>
-            <span class="lbl">Koji komentari se računaju</span>
+            <span class="lbl">Which comments count</span>
             <div class="choice">
-              <label class="opt"><input type="radio" name="mode" value="each" checked><div><b>Svaki komentar je jedna šansa</b><span>Ko komentariše više puta, ima više šansi.</span></div></label>
-              <label class="opt"><input type="radio" name="mode" value="user"><div><b>Jedan korisnik, jedna šansa</b><span>Računa se samo prvi ispravan komentar.</span></div></label>
+              <label class="opt"><input type="radio" name="mode" value="each" checked><div><b>Every comment is one entry</b><span>More comments mean more chances.</span></div></label>
+              <label class="opt"><input type="radio" name="mode" value="user"><div><b>One entry per person</b><span>Only the first valid comment counts.</span></div></label>
             </div>
             <div class="sub" id="maxWrap" style="margin-top:10px">
-              <label class="lbl" for="maxPer">Najviše šansi po korisniku (0 = bez limita)</label>
-              <div class="num" style="max-width:180px"><button type="button" data-step="-1" aria-label="Manje">−</button><input id="maxPer" type="number" min="0" max="999" value="0"><button type="button" data-step="1" aria-label="Više">+</button></div>
+              <label class="lbl" for="maxPer">Max entries per person (0 = no limit)</label>
+              <div class="num" style="max-width:180px"><button type="button" data-step="-1" aria-label="Less">−</button><input id="maxPer" type="number" min="0" max="999" value="0"><button type="button" data-step="1" aria-label="More">+</button></div>
             </div>
           </div>
 
-          <label class="check"><input type="checkbox" id="repeat"><span>Isti korisnik može da osvoji više puta<small>Inače se posle izvlačenja ostale šanse tog korisnika uklanjaju.</small></span></label>
+          <label class="check"><input type="checkbox" id="repeat"><span>The same person can win more than once<small>Otherwise their other entries are removed once they are drawn.</small></span></label>
 
           <div>
-            <span class="lbl">Da li pobednik prati stranicu</span>
+            <span class="lbl">Does the winner follow the page</span>
             <div class="choice">
-              <label class="opt"><input type="radio" name="follow" value="none" checked><div><b>Ne proveravaj</b></div></label>
-              <label class="opt"><input type="radio" name="follow" value="manual"><div><b>Ručna potvrda</b><span>Otvoriš profil pobednika, pa potvrdiš ili zameniš rezervom.</span></div></label>
-              <label class="opt"><input type="radio" name="follow" value="list"><div><b>Uporedi sa listom pratilaca</b><span>Followers fajl iz Instagram izvoza podataka ili TXT lista.</span></div></label>
+              <label class="opt"><input type="radio" name="follow" value="none" checked><div><b>Don't check</b></div></label>
+              <label class="opt"><input type="radio" name="follow" value="manual"><div><b>Confirm manually</b><span>Open the winner's profile, then confirm or replace with a backup.</span></div></label>
+              <label class="opt"><input type="radio" name="follow" value="list"><div><b>Match against a follower list</b><span>Followers file from your Instagram data export, or a TXT list.</span></div></label>
             </div>
             <div class="sub" id="followWrap" hidden style="margin-top:10px">
-              <div class="row"><label class="btn sm" for="followIn"><span class="ms">group</span>Učitaj pratioce</label><span class="status" id="followStatus">Nije učitano</span></div>
+              <div class="row"><label class="btn sm" for="followIn"><span class="ms">group</span>Load followers</label><span class="status" id="followStatus">Not loaded</span></div>
               <input type="file" id="followIn" accept=".json,.txt,.csv,.html" hidden>
-              <p class="help">Instagram → Centar naloga → Tvoje informacije i dozvole → Preuzmi informacije → Pratioci i praćenja, JSON. Fajl <code>followers_1.json</code>.</p>
+              <p class="help">Instagram → Accounts Center → Your information and permissions → Download your information → Followers and following, JSON. The file is <code>followers_1.json</code>.</p>
             </div>
           </div>
 
           <details class="adv">
-            <summary><span class="ms">tune</span>Dodatni uslovi</summary>
+            <summary><span class="ms">tune</span>More conditions</summary>
             <div class="fields">
-              <div><label class="lbl" for="keyword">Obavezna reč ili hashtag</label><input type="text" id="keyword" placeholder="#nagradnaigra"></div>
-              <div><label class="lbl" for="deadline">Rok za komentare</label><input type="datetime-local" id="deadline"></div>
-              <div class="full"><label class="lbl" for="blacklist">Isključeni nalozi</label><textarea id="blacklist" style="min-height:70px" placeholder="@zaposleni1, @partner.nalog"></textarea><p class="help">Odvoji zarezom ili novim redom.</p></div>
-              <label class="check full"><input type="checkbox" id="replies"><span>Računaj i odgovore na komentare<small>Obeleživač preuzima i odgovore, a ovde biraš da li se računaju.</small></span></label>
-              <div class="full"><label class="lbl" for="seedIn">Kod žreba</label><input type="text" id="seedIn" placeholder="Prazno = nasumičan" autocomplete="off"><p class="help">Isti kod i komentari daju isti rezultat.</p></div>
+              <div><label class="lbl" for="keyword">Required word or hashtag</label><input type="text" id="keyword" placeholder="#giveaway"></div>
+              <div><label class="lbl" for="deadline">Comment deadline</label><input type="datetime-local" id="deadline"></div>
+              <div class="full"><label class="lbl" for="blacklist">Excluded accounts</label><textarea id="blacklist" style="min-height:70px" placeholder="@employee1, @partner.account"></textarea><p class="help">Separate with commas or new lines.</p></div>
+              <label class="check full"><input type="checkbox" id="replies"><span>Count replies to comments<small>The bookmarklet collects replies too; choose here whether they count.</small></span></label>
+              <div class="full"><label class="lbl" for="seedIn">Draw code</label><input type="text" id="seedIn" placeholder="Empty = random" autocomplete="off"><p class="help">The same code and comments give the same result.</p></div>
             </div>
           </details>
         </form>
@@ -393,68 +393,68 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:28px 0 8px}
     </div>
 
     <div class="col col-right">
-      <!-- 3. Učesnici -->
+      <!-- 3. Entries -->
       <section class="panel" aria-labelledby="h-part">
-        <div class="panel-h"><h2 id="h-part"><span class="step">3</span> Učesnici</h2></div>
+        <div class="panel-h"><h2 id="h-part"><span class="step">3</span> Entries</h2></div>
         <div class="panel-b">
-          <div class="banner" id="sampleBanner" hidden><span>Prikazani su primer komentari.</span><button type="button" id="clearSample">Obriši primer</button></div>
+          <div class="banner" id="sampleBanner" hidden><span>Showing sample comments.</span><button type="button" id="clearSample">Clear sample</button></div>
           <div class="stats">
-            <div class="stat"><div class="v" id="sTotal">0</div><div class="k">komentara</div></div>
-            <div class="stat hl"><div class="v" id="sValid">0</div><div class="k">važećih šansi</div></div>
-            <div class="stat"><div class="v" id="sUsers">0</div><div class="k">učesnika</div></div>
-            <div class="stat"><div class="v" id="sOut">0</div><div class="k">isključeno</div></div>
+            <div class="stat"><div class="v" id="sTotal">0</div><div class="k">comments</div></div>
+            <div class="stat hl"><div class="v" id="sValid">0</div><div class="k">valid entries</div></div>
+            <div class="stat"><div class="v" id="sUsers">0</div><div class="k">people</div></div>
+            <div class="stat"><div class="v" id="sOut">0</div><div class="k">excluded</div></div>
           </div>
           <div class="reasons" id="reasons"></div>
           <div class="toolbar">
-            <div class="search"><span class="ms">search</span><input type="text" id="q" placeholder="Pretraži korisnika ili tekst" aria-label="Pretraga"></div>
+            <div class="search"><span class="ms">search</span><input type="text" id="q" placeholder="Search username or text" aria-label="Search"></div>
             <div class="filters" role="group" aria-label="Filter">
-              <button type="button" data-f="all" aria-pressed="true">Svi</button>
-              <button type="button" data-f="ok" aria-pressed="false">Važeći</button>
-              <button type="button" data-f="bad" aria-pressed="false">Isključeni</button>
+              <button type="button" data-f="all" aria-pressed="true">All</button>
+              <button type="button" data-f="ok" aria-pressed="false">Valid</button>
+              <button type="button" data-f="bad" aria-pressed="false">Excluded</button>
             </div>
           </div>
           <div class="list" id="list"></div>
           <div class="draw-cta" id="drawCta">
-            <p id="ctaText">Učitaj komentare da bi izvukao pobednike.</p>
-            <button class="btn primary" id="drawBtn" type="button" disabled><span class="ms">casino</span>Izvuci pobednike</button>
+            <p id="ctaText">Load comments to draw winners.</p>
+            <button class="btn primary" id="drawBtn" type="button" disabled><span class="ms">casino</span>Draw winners</button>
           </div>
         </div>
       </section>
 
-      <!-- 4. Pobednici -->
+      <!-- 4. Winners -->
       <section class="panel" id="results" hidden aria-labelledby="h-res">
-        <div class="panel-h"><h2 id="h-res"><span class="step">4</span> Pobednici</h2><span class="seed" id="seedOut" title="Kod žreba"></span></div>
+        <div class="panel-h"><h2 id="h-res"><span class="step">4</span> Winners</h2><span class="seed" id="seedOut" title="Draw code"></span></div>
         <div class="panel-b">
-          <div class="reel" id="reel" hidden><div class="name" id="reelName"></div><div class="cap">Izvlačenje u toku</div></div>
+          <div class="reel" id="reel" hidden><div class="name" id="reelName"></div><div class="cap">Drawing</div></div>
           <div class="winners" id="winners"></div>
-          <div class="sec-title" id="altTitle" hidden>Rezerve</div>
+          <div class="sec-title" id="altTitle" hidden>Backups</div>
           <div class="winners" id="alts"></div>
-          <div class="sec-title" id="outTitle" hidden>Diskvalifikovani</div>
+          <div class="sec-title" id="outTitle" hidden>Disqualified</div>
           <div class="winners" id="outs"></div>
           <p class="help" id="resMeta"></p>
           <div class="row">
-            <button class="btn" id="copyBtn" type="button"><span class="ms">content_copy</span>Kopiraj rezultate</button>
-            <button class="btn" id="imgBtn" type="button"><span class="ms">download</span>Slika za story</button>
-            <button class="btn" id="shareBtn" type="button"><span class="ms">share</span>Link rezultata</button>
-            <button class="btn ghost" id="againBtn" type="button"><span class="ms">refresh</span>Izvuci ponovo</button>
+            <button class="btn" id="copyBtn" type="button"><span class="ms">content_copy</span>Copy results</button>
+            <button class="btn" id="imgBtn" type="button"><span class="ms">download</span>Story image</button>
+            <button class="btn" id="shareBtn" type="button"><span class="ms">share</span>Results link</button>
+            <button class="btn ghost" id="againBtn" type="button"><span class="ms">refresh</span>Draw again</button>
           </div>
         </div>
       </section>
     </div>
   </div>
-  <footer>Komentare preuzima obeleživač u tvom pregledaču, sa tvojom Instagram prijavom. Ništa se ne šalje na drugi server.</footer>
+  <footer>Comments are collected by the bookmarklet in your own browser, with your Instagram login. Nothing is sent to another server.</footer>
 </div>
 
-<div class="mobile-bar" id="mobileBar"><small id="mbText">0 šansi</small><button class="btn primary" id="drawBtnM" type="button" disabled><span class="ms">casino</span>Izvuci pobednike</button></div>
+<div class="mobile-bar" id="mobileBar"><small id="mbText">0 entries</small><button class="btn primary" id="drawBtnM" type="button" disabled><span class="ms">casino</span>Draw winners</button></div>
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script>
-/* Obeleživač: ova funkcija se izvršava na instagram.com, u pregledaču korisnika i sa njegovom prijavom.
-   Čita komentare istim internim pozivima koje koristi instagram.com dok skroluješ komentare.
-   TARGET je adresa Raffly (GitHub Pages) ili null u artifact-u, gde se komentari kopiraju i nalepe. */
+/* Bookmarklet: this function runs on instagram.com, in the user's browser and with their login.
+   It reads comments with the same internal requests instagram.com makes while you scroll through comments.
+   TARGET is the Raffly address (GitHub Pages), or null inside an artifact, where comments are copied and pasted. */
 function zrebBookmarklet(TARGET) {
   var mm = location.pathname.match(/\/(p|reels?|tv)\/([A-Za-z0-9_-]+)/);
-  if (!/(^|\.)instagram\.com$/.test(location.hostname) || !mm) { alert("Raffly: otvori Instagram objavu (instagram.com/p/...) pa ponovo klikni obeleživač."); return; }
+  if (!/(^|\.)instagram\.com$/.test(location.hostname) || !mm) { alert("Raffly: open an Instagram post (instagram.com/p/...) and click the bookmarklet again."); return; }
   if (window.__zrebRunning) return;
   window.__zrebRunning = true;
   var code = mm[2], kind = mm[1].indexOf("reel") === 0 ? "reel" : mm[1];
@@ -483,9 +483,9 @@ function zrebBookmarklet(TARGET) {
     return b;
   }
   function close() { box.remove(); window.__zrebRunning = false; }
-  button("Otkaži", false, function () { stop = true; close(); });
+  button("Cancel", false, function () { stop = true; close(); });
   var stop = false;
-  say("Otvaram objavu...");
+  say("Opening the post...");
   var csrf = (document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/) || [])[1] || "";
   var H = { "X-IG-App-ID": "936619743392459", "X-ASBD-ID": "129477", "X-Requested-With": "XMLHttpRequest", "X-CSRFToken": csrf };
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -494,24 +494,24 @@ function zrebBookmarklet(TARGET) {
     if (stop) throw new Error("stop");
     var r = await fetch(path, { headers: H, credentials: "include" });
     if (r.status === 429 || r.status >= 500) {
-      if (tries >= 4) throw new Error("Instagram je privremeno ograničio zahteve. Sačekaj 10 do 15 minuta pa klikni Raffly ponovo.");
+      if (tries >= 4) throw new Error("Instagram has temporarily limited requests. Wait 10 to 15 minutes, then click Raffly again.");
       var w = 5000 * Math.pow(2, tries);
-      say("Instagram traži kratku pauzu. Nastavljam za " + Math.round(w / 1000) + " s...");
+      say("Instagram asked for a short pause. Resuming in " + Math.round(w / 1000) + " s...");
       await wait(w);
       return get(path, tries + 1);
     }
     var j = null;
     try { j = await r.json(); } catch (e) {}
-    if (r.status === 401 || (j && (j.message === "login_required" || j.require_login))) throw new Error("Prijavi se na Instagram u ovom pregledaču, pa ponovo klikni Raffly.");
-    if (j && (j.message === "checkpoint_required" || j.message === "challenge_required")) throw new Error("Instagram traži da potvrdiš nalog. Osveži stranicu, potvrdi, pa ponovo klikni Raffly.");
-    if (!j) throw new Error("Instagram je vratio neočekivan odgovor (" + r.status + "). Osveži stranicu i probaj ponovo.");
-    if (!r.ok || j.status === "fail") throw new Error(j.message || ("Greška " + r.status));
+    if (r.status === 401 || (j && (j.message === "login_required" || j.require_login))) throw new Error("Log in to Instagram in this browser, then click Raffly again.");
+    if (j && (j.message === "checkpoint_required" || j.message === "challenge_required")) throw new Error("Instagram wants you to confirm your account. Refresh the page, confirm, then click Raffly again.");
+    if (!j) throw new Error("Instagram returned an unexpected response (" + r.status + "). Refresh the page and try again.");
+    if (!r.ok || j.status === "fail") throw new Error(j.message || ("Error " + r.status));
     return j;
   }
   function pace(p) { return 700 + Math.random() * 700 + (p % 20 === 0 ? 4000 : 0); }
   (async function () {
     var info = null;
-    try { info = (await get("/api/v1/media/" + mediaId + "/info/")).items[0]; } catch (e) { if (e.message === "stop" || /Prijavi|potvrdiš/.test(e.message)) throw e; }
+    try { info = (await get("/api/v1/media/" + mediaId + "/info/")).items[0]; } catch (e) { if (e.message === "stop" || /Log in|confirm your account/.test(e.message)) throw e; }
     if (info && info.pk) mediaId = String(info.pk);
     var total = info ? info.comment_count : null, out = [], seen = {}, parents = [], cursor = null, used = {}, page = 0;
     function add(c, p) {
@@ -531,7 +531,7 @@ function zrebBookmarklet(TARGET) {
         if ((c.child_comment_count || 0) > pv.length) parents.push(String(c.pk));
       });
       if (total == null && j.comment_count != null) total = j.comment_count;
-      say("Preuzeto " + out.length + (total ? " od " + total : "") + " komentara...", total ? out.length / total * 100 : null);
+      say("Collected " + out.length + (total ? " of " + total : "") + " comments...", total ? out.length / total * 100 : null);
       if (j.has_more_comments === false && j.has_more_headload_comments === false) break;
       var next = j.next_min_id && j.has_more_headload_comments !== false ? ["min_id", j.next_min_id] : j.next_max_id && j.has_more_comments !== false ? ["max_id", j.next_max_id] : j.next_min_id ? ["min_id", j.next_min_id] : null;
       if (!next || used[next[1]]) break;
@@ -544,7 +544,7 @@ function zrebBookmarklet(TARGET) {
       for (;;) {
         var jj = await get("/api/v1/media/" + mediaId + "/comments/" + parents[i] + "/child_comments/" + (cc ? "?" + cc[0] + "=" + encodeURIComponent(cc[1]) : ""));
         (jj.child_comments || []).forEach(function (r) { add(r, parents[i]); });
-        say("Preuzimam odgovore (" + (i + 1) + " od " + parents.length + ")...", 100);
+        say("Collecting replies (" + (i + 1) + " of " + parents.length + ")...", 100);
         var nx = jj.next_max_child_cursor && jj.has_more_tail_child_comments ? ["max_id", jj.next_max_child_cursor] : jj.next_min_child_cursor && jj.has_more_head_child_comments ? ["min_id", jj.next_min_child_cursor] : null;
         if (!nx || usedC[nx[1]]) break;
         usedC[nx[1]] = 1;
@@ -558,35 +558,35 @@ function zrebBookmarklet(TARGET) {
     finish(payload);
   })().catch(function (e) {
     if (e.message === "stop") return;
-    title.textContent = "Raffly: nije uspelo";
+    title.textContent = "Raffly: something went wrong";
     say(e.message);
     acts.textContent = "";
-    button("Zatvori", false, close);
+    button("Close", false, close);
   });
   function finish(payload) {
     var n = payload.comments.length, json = JSON.stringify(payload);
-    title.textContent = "Raffly: preuzeto " + n + " komentara";
+    title.textContent = "Raffly: collected " + n + " comments";
     bar.style.width = "100%";
     acts.textContent = "";
     if (TARGET) {
-      say("Klikni da ih otvoriš u Raffly.");
-      var open = button("Otvori u Raffly", true, function () { send(payload, open); });
-      button("Kopiraj", false, function () { copy(json, this); });
+      say("Click to open them in Raffly.");
+      var open = button("Open in Raffly", true, function () { send(payload, open); });
+      button("Copy", false, function () { copy(json, this); });
     } else {
-      say("Kopiraj ih, vrati se u Raffly i pritisni Ctrl+V (na Mac-u Cmd+V).");
-      button("Kopiraj za Raffly", true, function () { copy(json, this); });
+      say("Copy them, go back to Raffly and press Ctrl+V (Cmd+V on Mac).");
+      button("Copy for Raffly", true, function () { copy(json, this); });
     }
-    button("Zatvori", false, close);
+    button("Close", false, close);
   }
   function copy(text, b) {
-    function ok() { b.textContent = "Kopirano"; say("Vrati se u Raffly i pritisni Ctrl+V (na Mac-u Cmd+V)."); }
+    function ok() { b.textContent = "Copied"; say("Go back to Raffly and press Ctrl+V (Cmd+V on Mac)."); }
     function legacy() {
       var ta = document.createElement("textarea");
       ta.value = text; ta.style.cssText = "position:fixed;opacity:0;top:0";
       document.body.appendChild(ta); ta.select();
       var r = false; try { r = document.execCommand("copy"); } catch (e) {}
       ta.remove();
-      if (r) ok(); else say("Kopiranje nije uspelo. Probaj ponovo.");
+      if (r) ok(); else say("Copying failed. Try again.");
     }
     try { navigator.clipboard.writeText(text).then(ok, legacy); } catch (e) { legacy(); }
   }
@@ -594,10 +594,10 @@ function zrebBookmarklet(TARGET) {
     var origin = new URL(TARGET).origin, id = Date.now() + "-" + mediaId, acked = false, tries = 0;
     var win = window.open(TARGET + "#import", "zreb");
     window.addEventListener("message", function (e) { if (e.origin === origin && e.data && e.data.type === "zreb-ack" && e.data.id === id) acked = true; });
-    b.textContent = "Šaljem...";
+    b.textContent = "Sending...";
     var t = setInterval(function () {
-      if (acked) { clearInterval(t); b.textContent = "Poslato"; say("Komentari su u Raffly. Možeš da zatvoriš ovaj prozorčić."); try { win.focus(); } catch (e) {} return; }
-      if (++tries > 30 || !win || win.closed) { clearInterval(t); b.textContent = "Otvori u Raffly"; say("Raffly nije primio komentare. Klikni Kopiraj, otvori Raffly i pritisni Ctrl+V."); return; }
+      if (acked) { clearInterval(t); b.textContent = "Sent"; say("The comments are in Raffly. You can close this box."); try { win.focus(); } catch (e) {} return; }
+      if (++tries > 30 || !win || win.closed) { clearInterval(t); b.textContent = "Open in Raffly"; say("Raffly didn't receive the comments. Click Copy, open Raffly and press Ctrl+V."); return; }
       try { win.postMessage({ type: "zreb-import", id: id, payload: payload }, origin); } catch (e) {}
     }, 400);
   }
@@ -612,7 +612,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 const normU = s => String(s || "").trim().replace(/^@+/, "").toLowerCase();
 const MENTION = /@([a-z0-9._]{1,30})/gi;
 const IMPORT_ORIGINS = ["https://www.instagram.com"];
-/* Na GitHub Pages (i svakom običnom sajtu) komentari stižu sami. U artifact-u (stranica u okviru) se nalepe sa Ctrl+V. */
+/* On GitHub Pages (or any normal site) comments arrive automatically. Inside an artifact (a framed page) they are pasted with Ctrl+V. */
 const EMBEDDED = (() => { try { return window.top !== window; } catch { return true; } })();
 const DIRECT = !EMBEDDED && /^https?:$/.test(location.protocol);
 const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
@@ -625,13 +625,13 @@ const store = {
 
 const state = { comments: [], source: "", isSample: false, posts: [], followers: null, rows: [], entries: [], filter: "all", q: "", shown: 120, draw: null };
 
-/* ---------- Tema ---------- */
-const themes = ["system", "light", "dark"], themeLabel = { system: "sistem", light: "svetla", dark: "tamna" };
+/* ---------- Theme ---------- */
+const themes = ["system", "light", "dark"], themeLabel = { system: "system", light: "light", dark: "dark" };
 let theme = store.get("zreb-theme") || "system";
 function applyTheme() {
   if (theme === "system") document.documentElement.removeAttribute("data-theme");
   else document.documentElement.setAttribute("data-theme", theme);
-  $("#themeBtn").textContent = "Tema: " + themeLabel[theme];
+  $("#themeBtn").textContent = "Theme: " + themeLabel[theme];
 }
 $("#themeBtn").onclick = () => { theme = themes[(themes.indexOf(theme) + 1) % 3]; store.set("zreb-theme", theme); applyTheme(); };
 applyTheme();
@@ -641,7 +641,7 @@ function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = fal
 function setStatus(msg, kind = "") { const st = $("#srcStatus"); st.className = "status " + kind; st.innerHTML = msg; }
 const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* ---------- Tabovi ---------- */
+/* ---------- Tabs ---------- */
 $$(".seg").forEach(seg => {
   const g = seg.dataset.group;
   $$("[role=tab]", seg).forEach(b => b.onclick = () => {
@@ -650,7 +650,7 @@ $$(".seg").forEach(seg => {
   });
 });
 
-/* ---------- Brojači ---------- */
+/* ---------- Steppers ---------- */
 $$(".num").forEach(n => {
   const inp = $("input", n);
   $$("button", n).forEach(b => b.onclick = () => {
@@ -660,7 +660,7 @@ $$(".num").forEach(n => {
   });
 });
 
-/* ---------- Parsiranje teksta ---------- */
+/* ---------- Text parsing (also understands Serbian Instagram UI words) ---------- */
 const NOISE = /^(reply|replies|odgovori|odgovor|see translation|prikaži prevod|prikazi prevod|verified|potvrđeno|like|sviđa mi se|edited|izmenjeno|author|autor|pinned|zakačeno|view (all )?\d* ?(more )?repl(y|ies).*|hide replies|sakrij odgovore|pogledaj (sve )?odgovore.*|prikaži odgovore.*|-+|·)$/i;
 const TIME = /^\d+\s?(s|sec|m|min|h|hr|d|w|wk|y|sek|č|h\.|dan[a]?|ned|nedelj[ae]|god|g)\.?$/i;
 const LIKES = /^[\d.,]+\s?(k\s)?(likes?|sviđanja|sviđanje|sviđa|lajk(ova|a)?)$/i;
@@ -749,7 +749,7 @@ function parseFile(name, txt) {
   return { list: parsePaste(txt) };
 }
 
-/* ---------- Pratioci (lista) ---------- */
+/* ---------- Follower list ---------- */
 function parseFollowers(txt) {
   const set = new Set();
   try {
@@ -769,7 +769,7 @@ function parseFollowers(txt) {
   set.delete(""); return set;
 }
 
-/* ---------- Pravila ---------- */
+/* ---------- Rules ---------- */
 function settings() {
   const v = id => $("#" + id).value;
   const kw = v("keyword").trim().toLowerCase();
@@ -800,20 +800,20 @@ function evaluate() {
     let tags = [...new Set([...c.text.matchAll(MENTION)].map(m => m[1].toLowerCase().replace(/\.+$/, "")))];
     if (s.noSelf) tags = tags.filter(t => t !== u && t !== s.owner);
     let reason = null;
-    if (!s.replies && c.isReply) reason = "Odgovor na komentar";
-    else if (s.owner && u === s.owner) reason = "Nalog organizatora";
-    else if (s.blacklist.has(u)) reason = "Isključen nalog";
-    else if (s.deadline && c.ts && c.ts > s.deadline) reason = "Posle roka";
-    else if (s.keyword && !c.text.toLowerCase().includes(s.keyword)) reason = "Nema obavezne reči";
+    if (!s.replies && c.isReply) reason = "Replies off";
+    else if (s.owner && u === s.owner) reason = "Organizer";
+    else if (s.blacklist.has(u)) reason = "Excluded account";
+    else if (s.deadline && c.ts && c.ts > s.deadline) reason = "After deadline";
+    else if (s.keyword && !c.text.toLowerCase().includes(s.keyword)) reason = "Missing keyword";
     else {
       const used = perUserTags.get(u) || new Set();
       const fresh = s.distinct ? tags.filter(t => !used.has(t)) : tags;
-      if (fresh.length < s.minTags) reason = s.distinct && tags.length >= s.minTags ? "Ponovljeni tagovi" : "Premalo tagova";
-      else if (s.follow === "list" && state.followers && !state.followers.has(u)) reason = "Ne prati stranicu";
+      if (fresh.length < s.minTags) reason = s.distinct && tags.length >= s.minTags ? "Repeated tags" : "Too few tags";
+      else if (s.follow === "list" && state.followers && !state.followers.has(u)) reason = "Not a follower";
       else {
         const cnt = perUserCount.get(u) || 0;
-        if (s.mode === "user" && cnt >= 1) reason = "Već učestvuje";
-        else if (s.mode === "each" && s.maxPer && cnt >= s.maxPer) reason = "Limit šansi";
+        if (s.mode === "user" && cnt >= 1) reason = "Already entered";
+        else if (s.mode === "each" && s.maxPer && cnt >= s.maxPer) reason = "Entry limit";
         else { perUserCount.set(u, cnt + 1); fresh.forEach(t => used.add(t)); perUserTags.set(u, used); }
       }
     }
@@ -823,10 +823,10 @@ function evaluate() {
   renderList();
 }
 
-/* ---------- Lista učesnika ---------- */
+/* ---------- Entry list ---------- */
 function hl(text) { return esc(text).replace(/@([a-z0-9._]{1,30})/gi, '<span class="m">@$1</span>'); }
-function fmtTs(ts) { return ts ? new Date(ts).toLocaleString("sr-Latn-RS", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : ""; }
-function plural(n, one, few, many) { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; }
+function fmtTs(ts) { return ts ? new Date(ts).toLocaleString("en-GB", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : ""; }
+function plural(n, one, many) { return n === 1 ? one : many; }
 function renderList() {
   const rows = state.rows, users = new Set(state.entries.map(c => c.username));
   const out = rows.filter(r => r.reason);
@@ -839,29 +839,29 @@ function renderList() {
   const q = state.q.toLowerCase();
   const vis = rows.filter(r => (state.filter === "all" || (state.filter === "ok" ? !r.reason : !!r.reason)) && (!q || r.c.username.includes(q) || r.c.text.toLowerCase().includes(q)));
   const list = $("#list");
-  if (!rows.length) list.innerHTML = '<div class="empty">Još nema komentara. Otvori objavu na Instagramu i klikni obeleživač Raffly.</div>';
-  else if (!vis.length) list.innerHTML = '<div class="empty">Nema rezultata za ovaj filter.</div>';
+  if (!rows.length) list.innerHTML = '<div class="empty">No comments yet. Open the post on Instagram and click the Raffly bookmarklet.</div>';
+  else if (!vis.length) list.innerHTML = '<div class="empty">No results for this filter.</div>';
   else {
     list.innerHTML = vis.slice(0, state.shown).map(r => `<div class="item">
-      <div class="u">@${esc(r.c.username)}<span class="ts">${fmtTs(r.c.ts)}${r.c.isReply ? " · odgovor" : ""}</span></div>
-      <span class="pill ${r.reason ? (r.reason === "Već učestvuje" || r.reason === "Limit šansi" ? "warn" : "bad") : "ok"}">${r.reason ? esc(r.reason) : "Važi · " + r.tags.length + " tag."}</span>
+      <div class="u">@${esc(r.c.username)}<span class="ts">${fmtTs(r.c.ts)}${r.c.isReply ? " · reply" : ""}</span></div>
+      <span class="pill ${r.reason ? (r.reason === "Already entered" || r.reason === "Entry limit" ? "warn" : "bad") : "ok"}">${r.reason ? esc(r.reason) : "Valid · " + r.tags.length + (r.tags.length === 1 ? " tag" : " tags")}</span>
       <div class="t">${hl(r.c.text)}</div></div>`).join("") +
-      (vis.length > state.shown ? `<button class="more" type="button" id="moreBtn">Prikaži još ${vis.length - state.shown}</button>` : "");
+      (vis.length > state.shown ? `<button class="more" type="button" id="moreBtn">Show ${vis.length - state.shown} more</button>` : "");
     const mb = $("#moreBtn"); if (mb) mb.onclick = () => { state.shown += 200; renderList(); };
   }
   const n = state.entries.length, s = settings();
   $("#drawBtn").disabled = !n; $("#drawBtnM").disabled = !n;
-  $("#mbText").textContent = `${n} šansi · ${users.size} uč.`;
-  $("#ctaText").textContent = !rows.length ? "Učitaj komentare da bi izvukao pobednike." :
-    !n ? "Nijedan komentar ne ispunjava pravila." :
-    `${n} važećih šansi od ${users.size} učesnika. Izvlači se ${s.nWin} ${plural(s.nWin, "pobednik", "pobednika", "pobednika")}${s.nAlt ? ` i ${s.nAlt} ${plural(s.nAlt, "rezerva", "rezerve", "rezervi")}` : ""}.`;
+  $("#mbText").textContent = `${n} entries · ${users.size} people`;
+  $("#ctaText").textContent = !rows.length ? "Load comments to draw winners." :
+    !n ? "No comment meets the rules." :
+    `${n} valid ${plural(n, "entry", "entries")} from ${users.size} ${plural(users.size, "person", "people")}. Drawing ${s.nWin} ${plural(s.nWin, "winner", "winners")}${s.nAlt ? ` and ${s.nAlt} ${plural(s.nAlt, "backup", "backups")}` : ""}.`;
   $("#sampleBanner").hidden = !state.isSample;
 }
 
 function setComments(list, source, isSample = false, posts = []) {
   state.comments = list; state.source = source; state.isSample = isSample; state.shown = 120; state.posts = posts;
-  if (list.length) setStatus(`<span class="ms">check_circle</span>${list.length} ${plural(list.length, "komentar", "komentara", "komentara")} · ${esc(source)}`, "ok");
-  else setStatus("Nije pronađen nijedan komentar.", "bad");
+  if (list.length) setStatus(`<span class="ms">check_circle</span>${list.length} ${plural(list.length, "comment", "comments")} · ${esc(source)}`, "ok");
+  else setStatus("No comments found.", "bad");
   $("#results").hidden = true; state.draw = null;
   if (!posts.length) $("#postCard").hidden = true;
   $("#waitBox").hidden = list.length > 0 && !isSample;
@@ -871,10 +871,10 @@ function setComments(list, source, isSample = false, posts = []) {
 function showPost(posts) {
   const p = posts[0]; if (!p) { $("#postCard").hidden = true; return; }
   $("#postCard").hidden = false;
-  $("#postOwner").textContent = (p.owner ? "@" + p.owner : "Objava") + (posts.length > 1 ? ` i još ${posts.length - 1}` : "");
+  $("#postOwner").textContent = (p.owner ? "@" + p.owner : "Post") + (posts.length > 1 ? ` and ${posts.length - 1} more` : "");
   $("#postCap").textContent = p.caption || p.url;
   const total = posts.reduce((a, x) => a + (x.commentCount || 0), 0);
-  $("#postCount").textContent = total ? `${total} komentara prema Instagramu` : "";
+  $("#postCount").textContent = total ? `${total} comments according to Instagram` : "";
   const img = $("#postImg");
   img.hidden = true; $("#postPh").hidden = false;
   if (p.thumb) {
@@ -887,7 +887,7 @@ function adoptOwner(owner, wasSample) {
   if (owner && (wasSample || !$("#owner").value.trim())) $("#owner").value = "@" + owner;
 }
 
-/* ---------- Nasumičnost (seed) ---------- */
+/* ---------- Seeded randomness ---------- */
 function newSeed() { const a = new Uint32Array(2); crypto.getRandomValues(a); return [...a].map(x => x.toString(16).toUpperCase().padStart(8, "0")).join("").replace(/(.{4})(?=.)/g, "$1-"); }
 function cyrb128(str) { let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
   for (let i = 0, k; i < str.length; i++) { k = str.charCodeAt(i); h1 = h2 ^ Math.imul(h1 ^ k, 597399067); h2 = h3 ^ Math.imul(h2 ^ k, 2869860233); h3 = h4 ^ Math.imul(h3 ^ k, 951274213); h4 = h1 ^ Math.imul(h4 ^ k, 2716044179); }
@@ -895,7 +895,7 @@ function cyrb128(str) { let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h
   return [(h1 ^ h2 ^ h3 ^ h4) >>> 0, (h2 ^ h1) >>> 0, (h3 ^ h1) >>> 0, (h4 ^ h1) >>> 0]; }
 function sfc32(a, b, c, d) { return () => { a |= 0; b |= 0; c |= 0; d |= 0; const t = (a + b | 0) + d | 0; d = d + 1 | 0; a = b ^ b >>> 9; b = c + (c << 3) | 0; c = (c << 21 | c >>> 11); c = c + t | 0; return (t >>> 0) / 4294967296; }; }
 
-/* ---------- Izvlačenje ---------- */
+/* ---------- Draw ---------- */
 function makeDraw(entries, s) {
   const seed = s.seed || newSeed();
   return { seed, rng: sfc32(...cyrb128(seed.toUpperCase())), pool: entries.slice(), used: new Set(), repeat: s.repeat, nAlt: s.nAlt,
@@ -941,11 +941,11 @@ function spin(done) {
 function ticket(w, i, kind) {
   const d = state.draw, e = w.e;
   let badge = "";
-  if (d.mode === "manual" && kind === "win") badge = w.status === "ok" ? '<span class="badge ok">Potvrđen</span>' : '<span class="badge wait">Čeka proveru</span>';
+  if (d.mode === "manual" && kind === "win") badge = w.status === "ok" ? '<span class="badge ok">Confirmed</span>' : '<span class="badge wait">Needs check</span>';
   const acts = d.mode === "manual" && kind === "win" && w.status !== "ok" ? `<div class="acts">
       <a class="btn sm" href="https://www.instagram.com/${encodeURIComponent(e.username)}/" target="_blank" rel="noopener"><span class="ms">person</span>Profil</a>
-      <button class="btn sm" type="button" data-ok="${i}"><span class="ms">verified</span>Prati, potvrdi</button>
-      <button class="btn sm" type="button" data-no="${i}"><span class="ms">block</span>Ne prati, zameni</button></div>` : "";
+      <button class="btn sm" type="button" data-ok="${i}"><span class="ms">verified</span>Follows, confirm</button>
+      <button class="btn sm" type="button" data-no="${i}"><span class="ms">block</span>Not following, replace</button></div>` : "";
   const rank = kind === "win" ? i + 1 : kind === "alt" ? "R" + (i + 1) : "×";
   const ok = d.mode === "manual" && w.status === "ok";
   return `<div class="ticket reveal ${kind === "alt" ? "alt" : ""} ${kind === "out" ? "out" : ""} ${ok ? "confirmed" : ""}" style="animation-delay:${Math.min(i, 8) * 120}ms">
@@ -956,26 +956,26 @@ function ticket(w, i, kind) {
 function renderResults() {
   const d = state.draw;
   if (!d) { $("#results").hidden = true; return; }
-  $("#winners").innerHTML = d.winners.length ? d.winners.map((w, i) => ticket(w, i, "win")).join("") : '<div class="empty">Nema dovoljno učesnika.</div>';
+  $("#winners").innerHTML = d.winners.length ? d.winners.map((w, i) => ticket(w, i, "win")).join("") : '<div class="empty">Not enough entries.</div>';
   $("#alts").innerHTML = d.alts.map((w, i) => ticket(w, i, "alt")).join("");
   $("#outs").innerHTML = d.out.map((w, i) => ticket(w, i, "out")).join("");
   $("#altTitle").hidden = !d.alts.length;
   $("#outTitle").hidden = !d.out.length;
   const s = settings();
-  const short = d.winners.length < s.nWin ? ` Izvučeno je ${d.winners.length} od ${s.nWin} jer nema više učesnika.` : "";
-  $("#resMeta").textContent = `Izvučeno ${d.at.toLocaleString("sr-Latn-RS")} iz ${d.total} šansi (${d.users} učesnika). Kod žreba ${d.seed}.${short}`;
+  const short = d.winners.length < s.nWin ? ` Only ${d.winners.length} of ${s.nWin} drawn because there are no more people.` : "";
+  $("#resMeta").textContent = `Drawn ${d.at.toLocaleString("en-GB")} from ${d.total} entries (${d.users} people). Draw code ${d.seed}.${short}`;
   $$("[data-ok]").forEach(b => b.onclick = () => { d.winners[+b.dataset.ok].status = "ok"; renderResults(); });
   $$("[data-no]").forEach(b => b.onclick = () => {
     const i = +b.dataset.no;
     d.out.push(d.winners[i]);
     const rep = d.alts.shift() || drawOne(d);
-    if (rep) { d.winners[i] = rep; toast("Zamenjen sledećom rezervom: @" + rep.e.username); }
-    else { d.winners.splice(i, 1); toast("Nema više rezervi ni učesnika."); }
+    if (rep) { d.winners[i] = rep; toast("Replaced with the next backup: @" + rep.e.username); }
+    else { d.winners.splice(i, 1); toast("No more backups or entries."); }
     renderResults();
   });
 }
 
-/* ---------- Izvoz ---------- */
+/* ---------- Export ---------- */
 function b64e(str) { let s = ""; new TextEncoder().encode(str).forEach(x => s += String.fromCharCode(x)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function b64d(s) { const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))); }
 function shareUrl() {
@@ -991,27 +991,27 @@ function shareUrl() {
 }
 function resultText() {
   const d = state.draw; if (!d) return "";
-  const L = ["Pobednici nagradne igre:"];
+  const L = ["Giveaway winners:"];
   d.winners.forEach((w, i) => L.push(`${i + 1}. @${w.e.username}`));
-  if (d.alts.length) { L.push("", "Rezerve:"); d.alts.forEach((w, i) => L.push(`R${i + 1}. @${w.e.username}`)); }
-  L.push("", `Izvučeno ${d.at.toLocaleString("sr-Latn-RS")} iz ${d.total} šansi (${d.users} učesnika). Kod žreba: ${d.seed}`);
-  L.push("Zapis žreba: " + shareUrl());
+  if (d.alts.length) { L.push("", "Backups:"); d.alts.forEach((w, i) => L.push(`R${i + 1}. @${w.e.username}`)); }
+  L.push("", `Drawn ${d.at.toLocaleString("en-GB")} from ${d.total} entries (${d.users} people). Draw code: ${d.seed}`);
+  L.push("Draw record: " + shareUrl());
   return L.join("\n");
 }
 async function copyText(txt, msg) {
   try { await navigator.clipboard.writeText(txt); toast(msg); }
-  catch { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast(msg); } catch { toast("Kopiranje nije uspelo"); } ta.remove(); }
+  catch { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast(msg); } catch { toast("Copying failed"); } ta.remove(); }
 }
-$("#copyBtn").onclick = () => state.draw && copyText(resultText(), "Rezultati su kopirani");
-$("#shareBtn").onclick = () => state.draw && copyText(shareUrl(), "Link rezultata je kopiran");
+$("#copyBtn").onclick = () => state.draw && copyText(resultText(), "Results copied");
+$("#shareBtn").onclick = () => state.draw && copyText(shareUrl(), "Results link copied");
 $("#imgBtn").onclick = () => {
   const d = state.draw; if (!d) return;
   const cv = document.createElement("canvas"); cv.width = 1080; cv.height = 1920; const g = cv.getContext("2d");
   const bg = "#16171C", acc = "#F2668F", fg = "#ECEDF2", mu = "#9A9DAA";
   g.fillStyle = bg; g.fillRect(0, 0, 1080, 1920);
   g.fillStyle = acc; g.fillRect(90, 260, 120, 8);
-  g.fillStyle = fg; g.font = "700 96px Geist, system-ui, sans-serif"; g.fillText(d.winners.length > 1 ? "Pobednici" : "Pobednik", 90, 400);
-  g.fillStyle = mu; g.font = "400 40px Geist, system-ui, sans-serif"; g.fillText("Hvala svima na učešću!", 90, 470);
+  g.fillStyle = fg; g.font = "700 96px Geist, system-ui, sans-serif"; g.fillText(d.winners.length > 1 ? "Winners" : "Winner", 90, 400);
+  g.fillStyle = mu; g.font = "400 40px Geist, system-ui, sans-serif"; g.fillText("Thanks to everyone who entered!", 90, 470);
   let y = 620; const lines = d.winners.slice(0, 10);
   const size = lines.length > 6 ? 58 : 76;
   lines.forEach((w, i) => {
@@ -1021,26 +1021,26 @@ $("#imgBtn").onclick = () => {
     g.fillText(n, 200, y); y += size * 1.75;
   });
   g.fillStyle = mu; g.font = "400 32px Geist, system-ui, sans-serif";
-  g.fillText(`${d.total} šansi · ${d.users} učesnika`, 90, 1700);
-  g.font = '400 30px "Geist Mono", monospace'; g.fillText("Kod žreba " + d.seed, 90, 1760);
+  g.fillText(`${d.total} entries · ${d.users} people`, 90, 1700);
+  g.font = '400 30px "Geist Mono", monospace'; g.fillText("Draw code " + d.seed, 90, 1760);
   cv.toBlob(b => {
-    const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "pobednici.png";
+    const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "winners.png";
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    toast("Slika je sačuvana");
+    toast("Image saved");
   }, "image/png");
 };
 $("#againBtn").onclick = () => { $("#seedIn").value = ""; runDraw(); };
 $("#drawBtn").onclick = runDraw; $("#drawBtnM").onclick = runDraw;
 
-/* ---------- Javni link rezultata ---------- */
+/* ---------- Public results link ---------- */
 function showPublic() {
   const m = location.hash.match(/^#r=([A-Za-z0-9_-]+)/); if (!m) return false;
   let p; try { p = JSON.parse(b64d(m[1])); } catch { return false; }
   $("#mainGrid").hidden = true; $("#mobileBar").hidden = true; $("#publicView").hidden = false;
   $("#pubSeed").textContent = String(p.s || "");
-  $("#pubMeta").textContent = `Izvučeno ${new Date(p.t).toLocaleString("sr-Latn-RS")} iz ${+p.n || 0} šansi (${+p.u || 0} učesnika).`;
+  $("#pubMeta").textContent = `Drawn ${new Date(p.t).toLocaleString("en-GB")} from ${+p.n || 0} entries (${+p.u || 0} people).`;
   const card = (x, i, kind) => `<div class="ticket reveal ${kind === "alt" ? "alt" : ""} ${kind === "out" ? "out" : ""} ${x[2] ? "confirmed" : ""}" style="animation-delay:${Math.min(i, 8) * 120}ms"><div class="rank">${kind === "win" ? i + 1 : kind === "alt" ? "R" + (i + 1) : "×"}</div>
-    <div class="body"><div class="who"><a href="https://www.instagram.com/${encodeURIComponent(x[0])}/" target="_blank" rel="noopener">@${esc(x[0])}</a>${x[2] ? '<span class="badge ok">Proveren</span>' : ""}${kind === "out" ? '<span class="badge bad">Ne ispunjava uslove</span>' : ""}</div>
+    <div class="body"><div class="who"><a href="https://www.instagram.com/${encodeURIComponent(x[0])}/" target="_blank" rel="noopener">@${esc(x[0])}</a>${x[2] ? '<span class="badge ok">Verified</span>' : ""}${kind === "out" ? '<span class="badge bad">Ne ispunjava uslove</span>' : ""}</div>
     <div class="txt">${hl(x[1] || "")}</div></div></div>`;
   $("#pubWinners").innerHTML = (p.w || []).map((x, i) => card(x, i, "win")).join("");
   $("#pubAlts").innerHTML = (p.a || []).map((x, i) => card(x, i, "alt")).join("");
@@ -1053,7 +1053,7 @@ function showPublic() {
 }
 addEventListener("hashchange", () => { if (/^#r=/.test(location.hash) || $("#publicView").hidden === false) location.reload(); });
 
-/* ---------- Prijem komentara iz obeleživača ---------- */
+/* ---------- Receiving comments from the bookmarklet ---------- */
 function markReady() { store.set("zreb-bm-ok", "1"); applyReady(); }
 function applyReady() {
   const ready = store.get("zreb-bm-ok") === "1";
@@ -1065,11 +1065,11 @@ function setupTexts() {
   const mod = IS_MAC ? "Cmd" : "Ctrl";
   $$("kbd.mod").forEach(k => k.textContent = mod);
   if (DIRECT) {
-    $("#step3Title").textContent = "Klikni „Otvori u Raffly“";
-    $("#step3Text").textContent = "Kad obeleživač završi, komentari stižu ovde sami.";
+    $("#step3Title").textContent = "Click \"Open in Raffly\"";
+    $("#step3Text").textContent = "When the bookmarklet finishes, the comments arrive here automatically.";
   } else {
-    $("#step3Title").textContent = "Klikni „Kopiraj za Raffly“, pa se vrati ovde";
-    $("#step3Text").innerHTML = `Pritisni <kbd>${mod}</kbd>+<kbd>V</kbd> bilo gde na ovoj strani.`;
+    $("#step3Title").textContent = "Click \"Copy for Raffly\", then come back here";
+    $("#step3Text").innerHTML = `Press <kbd>${mod}</kbd>+<kbd>V</kbd> anywhere on this page.`;
   }
 }
 function importPayload(p, source) {
@@ -1082,7 +1082,7 @@ function importPayload(p, source) {
     posts = state.posts.concat(posts);
     $("#mergeIn").checked = false;
   }
-  setComments(list, posts.length > 1 ? `${posts.length} objave` : source, false, posts);
+  setComments(list, posts.length > 1 ? `${posts.length} posts` : source, false, posts);
   showPost(posts);
   if (post.url) $("#link0").value = post.url;
   adoptOwner(post.owner, wasSample);
@@ -1090,7 +1090,7 @@ function importPayload(p, source) {
   markReady();
   $("#waitBox").hidden = true;
   $("#mergeWrap").hidden = false;
-  toast(`Stiglo je ${list.length} ${plural(list.length, "komentar", "komentara", "komentara")}`);
+  toast(`${list.length} ${plural(list.length, "comment", "comments")} received`);
 }
 function zrebJson(txt) {
   if (!/^\s*\{/.test(txt || "")) return null;
@@ -1101,7 +1101,7 @@ addEventListener("message", e => {
   try { e.source.postMessage({ type: "zreb-ack", id: e.data.id }, e.origin); } catch {}
   if (state.lastImport === e.data.id) return;
   state.lastImport = e.data.id;
-  importPayload(e.data.payload || {}, "sa Instagrama");
+  importPayload(e.data.payload || {}, "from Instagram");
   window.focus();
 });
 document.addEventListener("paste", e => {
@@ -1109,8 +1109,8 @@ document.addEventListener("paste", e => {
   const inField = t && t.matches && t.matches("input, textarea");
   const txt = e.clipboardData ? e.clipboardData.getData("text") : "";
   const data = zrebJson(txt);
-  if (data) { e.preventDefault(); importPayload(data, "sa Instagrama"); return; }
-  if (!inField && txt.trim()) toast("U kopiranom tekstu nisu komentari. Klikni Raffly na Instagram objavi, pa „Kopiraj za Raffly“.");
+  if (data) { e.preventDefault(); importPayload(data, "from Instagram"); return; }
+  if (!inField && txt.trim()) toast("The copied text has no comments. Click Raffly on an Instagram post, then \"Copy for Raffly\".");
 });
 function normLink(s) {
   const m = String(s).trim().match(/^(?:https?:\/\/)?(?:www\.|m\.)?instagram\.com\/(?:[A-Za-z0-9._]+\/)?(p|reels?|tv)\/([A-Za-z0-9_-]+)/i);
@@ -1119,24 +1119,24 @@ function normLink(s) {
 }
 $("#openPostBtn").onclick = () => {
   const v = $("#link0").value.trim();
-  if (!v) { toast("Nalepi link objave"); $("#link0").focus(); return; }
+  if (!v) { toast("Paste a post link"); $("#link0").focus(); return; }
   const u = normLink(v);
-  if (!u) { setStatus("Ovo nije link Instagram objave.", "bad"); return; }
+  if (!u) { setStatus("This is not an Instagram post link.", "bad"); return; }
   setStatus("");
   window.open(u, "_blank", "noopener");
 };
 $("#link0").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#openPostBtn").click(); } });
 
-/* ---------- Obeleživač ---------- */
+/* ---------- Bookmarklet ---------- */
 function bookmarkletHref() {
   const target = DIRECT ? location.href.split("#")[0] : null;
   return "javascript:" + encodeURIComponent("(" + zrebBookmarklet.toString() + ")(" + JSON.stringify(target) + ");void 0");
 }
 $("#bmLink").href = bookmarkletHref();
-$("#bmLink").onclick = e => { e.preventDefault(); toast("Prevuci dugme Raffly mišem na traku sa obeleživačima."); };
-$("#copyBmBtn").onclick = () => copyText(bookmarkletHref(), "Kod obeleživača je kopiran");
+$("#bmLink").onclick = e => { e.preventDefault(); toast("Drag the Raffly button to your bookmarks bar with your mouse."); };
+$("#copyBmBtn").onclick = () => copyText(bookmarkletHref(), "Bookmarklet code copied");
 
-/* ---------- Pravila se pamte u ovom pregledaču ---------- */
+/* ---------- Rules are remembered in this browser ---------- */
 const RULE_IDS = ["nWin", "nAlt", "minTags", "owner", "distinctTags", "noSelfTag", "maxPer", "repeat", "keyword", "blacklist", "replies"];
 function saveRules() {
   const o = {};
@@ -1154,7 +1154,7 @@ function loadRules() {
   return true;
 }
 
-/* ---------- Ostali unosi ---------- */
+/* ---------- Other inputs ---------- */
 function importFile(name, txt) {
   const wasSample = state.isSample;
   const r = parseFile(name, txt);
@@ -1165,27 +1165,27 @@ $("#parseBtn").onclick = () => {
   const txt = $("#pasteBox").value;
   try {
     const z = zrebJson(txt);
-    if (z) importPayload(z, "sa Instagrama");
-    else if (/^\s*[\[{]/.test(txt)) importFile("nalepljen JSON", txt);
-    else { const l = parsePaste(txt); setComments(l, "nalepljeno"); if (!l.length) toast("Nisam prepoznao komentare. Proveri format."); }
-  } catch (e) { setStatus("Tekst nije moguće pročitati: " + esc(e.message), "bad"); }
+    if (z) importPayload(z, "from Instagram");
+    else if (/^\s*[\[{]/.test(txt)) importFile("pasted JSON", txt);
+    else { const l = parsePaste(txt); setComments(l, "pasted"); if (!l.length) toast("No comments recognized. Check the format."); }
+  } catch (e) { setStatus("Could not read the text: " + esc(e.message), "bad"); }
 };
 $("#sampleBtn").onclick = loadSample;
 $("#clearSample").onclick = () => { $("#pasteBox").value = ""; $("#owner").value = ""; setComments([], ""); setStatus(""); };
-$("#fileIn").onchange = async e => { const f = e.target.files[0]; if (!f) return; try { importFile(f.name, await f.text()); } catch (err) { setStatus("Fajl nije moguće pročitati: " + esc(err.message), "bad"); } e.target.value = ""; };
+$("#fileIn").onchange = async e => { const f = e.target.files[0]; if (!f) return; try { importFile(f.name, await f.text()); } catch (err) { setStatus("Could not read the file: " + esc(err.message), "bad"); } e.target.value = ""; };
 const drop = $("#drop");
 ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
-drop.addEventListener("drop", async e => { const f = e.dataTransfer.files[0]; if (f) try { importFile(f.name, await f.text()); } catch (err) { setStatus("Fajl nije moguće pročitati: " + esc(err.message), "bad"); } });
+drop.addEventListener("drop", async e => { const f = e.dataTransfer.files[0]; if (f) try { importFile(f.name, await f.text()); } catch (err) { setStatus("Could not read the file: " + esc(err.message), "bad"); } });
 $("#followIn").onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   state.followers = parseFollowers(await f.text());
   const st = $("#followStatus"); st.className = "status " + (state.followers.size ? "ok" : "bad");
-  st.textContent = state.followers.size ? state.followers.size + " pratilaca" : "Nijedan pratilac nije pronađen";
+  st.textContent = state.followers.size ? state.followers.size + " followers" : "No followers found";
   evaluate();
 };
 
-/* ---------- Reaktivnost pravila ---------- */
+/* ---------- Live rule updates ---------- */
 $("#rules").addEventListener("input", () => { syncSubs(); evaluate(); saveRules(); });
 $("#rules").addEventListener("change", () => { syncSubs(); evaluate(); saveRules(); });
 $("#q").addEventListener("input", e => { state.q = e.target.value; state.shown = 120; renderList(); });
@@ -1196,47 +1196,47 @@ function syncSubs() {
   $("#followWrap").hidden = f !== "list";
 }
 
-/* ---------- Primer ---------- */
+/* ---------- Sample ---------- */
 function loadSample() {
-  const S = `pekara.zrno: Nagradna igra! Tagujte 2 prijatelja i pratite nas
-ana.markovic: Učestvujem! @mila.jovanovic @nikola_p
-mila.jovanovic: Jaoo kako izgleda @ana.markovic @teodora.r
-stefan_ilic: @marko.dj @lazar.vuk
-teodora.r: Obožavam vaš kroasan @jelena.s
-jelena.s: @teodora.r @iva_kostic @sara.m
-marko.dj: Probam i ja @stefan_ilic @dusan.k
-lazar.vuk: Super! @marko.dj @stefan_ilic
-iva_kostic: @jelena.s @sara.m #nagradnaigra
-sara.m: @iva_kostic @nina.pavl
-nina.pavl: Mmm
-dusan.k: @marko.dj @mila.jovanovic
-ana.markovic: Još jednom za sreću @luka.b @tamara.n
-milos.petr: @nina.pavl @sara.m @iva_kostic
-tamara.n: @luka.b @ana.markovic
-luka.b: @tamara.n @milos.petr
-katarina_v: @pekara.zrno @katarina_v
-vuk.radovic: @ognjen.s @petra.l
-petra.l: Divno! @vuk.radovic @ognjen.s
-ognjen.s: @petra.l @vuk.radovic
-ana.markovic: @mila.jovanovic @nikola_p
-bojana_c: @maja.t @goran.m
-maja.t: @bojana_c @goran.m
-goran.m: @maja.t @bojana_c
-emilija.d: Volim vašu pekaru!
-filip.z: @emilija.d @aleksa.j
-aleksa.j: @filip.z @emilija.d
-helena.s: @filip.z
-ivan.miletic: @helena.s @aleksa.j
-natasa.lj: @ivan.miletic @helena.s
-djordje_p: @natasa.lj @ivan.miletic
-sofija.k: @djordje_p @natasa.lj
-nemanja.r: @sofija.k @djordje_p
-andjela.b: @nemanja.r @sofija.k`;
-  $("#pasteBox").value = S; $("#owner").value = "@pekara.zrno"; $("#mergeWrap").hidden = true;
-  setComments(parsePaste(S), "primer", true);
+  const S = `crumb.bakery: GIVEAWAY! Tag 2 friends and follow us to enter
+emma.clark: I'm in! @mia.jones @noah_p
+mia.jones: This looks amazing @emma.clark @lily.r
+liam_baker: @oliver.d @lucas.wood
+lily.r: Love your croissants @grace.s
+grace.s: @lily.r @ava_kim @sophie.m
+oliver.d: Count me in @liam_baker @ethan.k
+lucas.wood: Yes please! @oliver.d @liam_baker
+ava_kim: @grace.s @sophie.m #giveaway
+sophie.m: @ava_kim @nina.p
+nina.p: Yum
+ethan.k: @oliver.d @mia.jones
+emma.clark: One more for luck @leo.b @hannah.n
+max.harris: @nina.p @sophie.m @ava_kim
+hannah.n: @leo.b @emma.clark
+leo.b: @hannah.n @max.harris
+chloe_v: @crumb.bakery @chloe_v
+jack.reed: @owen.s @ruby.l
+ruby.l: Gorgeous! @jack.reed @owen.s
+owen.s: @ruby.l @jack.reed
+emma.clark: @mia.jones @noah_p
+zoe_c: @isla.t @ryan.m
+isla.t: @zoe_c @ryan.m
+ryan.m: @isla.t @zoe_c
+amelia.d: Best bakery in town!
+finn.z: @amelia.d @alex.j
+alex.j: @finn.z @amelia.d
+harper.s: @finn.z
+ivan.mills: @harper.s @alex.j
+nora.l: @ivan.mills @harper.s
+daniel_p: @nora.l @ivan.mills
+sofia.k: @daniel_p @nora.l
+henry.r: @sofia.k @daniel_p
+ella.b: @henry.r @sofia.k`;
+  $("#pasteBox").value = S; $("#owner").value = "@crumb.bakery"; $("#mergeWrap").hidden = true;
+  setComments(parsePaste(S), "sample", true);
 }
 
-/* Ako se font sa ikonicama ne učita, sakrij ih umesto da se prikazuju reči. */
+/* If the icon font fails to load, hide icons instead of showing their names as text. */
 setTimeout(() => {
   const loaded = [...document.fonts].some(f => /Material Symbols/.test(f.family) && f.status === "loaded");
   if (!loaded) document.documentElement.classList.add("no-icons");
