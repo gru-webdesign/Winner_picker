@@ -25,9 +25,6 @@ The bookmarklet reads the comments in your own browser, using the Instagram sess
 
 Results: winners, backups, text to copy, a story image (1080×1920) and a public results link to share with your followers. Your rules are remembered in the browser for the next draw.
 
-## Publishing on GitHub Pages
-
-Settings → Pages → Deploy from branch → `main` / `/ (root)` → Save. The app is live at the address above within a minute or two.
 
 ## Note
 
